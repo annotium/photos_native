@@ -80,10 +80,11 @@ end
    
 2. Config plist file
  Add key `NSPhotoLibraryUsageDescription` to the the `ios/Runner/Info.plist`:
-    ```plist
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>In order to access your photo library</string>
-    ```
+
+```plist
+<key>NSPhotoLibraryUsageDescription</key>
+<string>App needs access to photo library</string>
+```
 
 </details>  
 
@@ -112,7 +113,7 @@ await PhotosNative.requestPermissions();
 
 
 ```dart
-    final gallery = await PhotosNative.loadGallery(title: 'All Photos');
+final gallery = await PhotosNative.loadGallery(title: 'All Photos');
 ```
 
 See [PHGallery]() for more details
@@ -122,11 +123,11 @@ See [PHGallery]() for more details
 Return photo thumnail image descriptor
 
 ```dart
-    final descriptor = await PhotosNative.getThumbnail(200, 200, 'id');
+final descriptor = await PhotosNative.getThumbnail(200, 200, 'id');
 
-    // or load from uri
+// or load from uri
 
-    final descriptor = await PhotosNative.getThumbnail(200, 200, 'image uri');
+final descriptor = await PhotosNative.getThumbnail(200, 200, 'image uri');
 ```
 
 See class [PHImageDescription]() for more details
@@ -145,7 +146,7 @@ See class [PHImageDescription] for more details
 
 Return the number of deleted images
 ```dart
-    await PhotosNative.delete(['photo_id', 'photo_id2']);
+await PhotosNative.delete(['photo_id', 'photo_id2']);
 ```
 
 ### Save image
@@ -153,7 +154,7 @@ Return the number of deleted images
 Save image to a path/directory ...
 
 ```dart
-    await PhotosNative.save(bytes, width, height, path: path);
+await PhotosNative.save(bytes, width, height, path: path);
 ```
 
 ### Share image
@@ -161,7 +162,7 @@ Save image to a path/directory ...
 Share image with other apps
 
 ```dart
-    await PhotosNative.share(bytes, width, height, devicePixelRatio);
+await PhotosNative.share(bytes, width, height, devicePixelRatio);
 ```
 
 ## Experiment
@@ -171,14 +172,14 @@ Working with Flutter backend texture. Read [Flutter Texture](https://api.flutter
 ### Load image texture
 
 ```dart
-    int textureId = await PhotosNative.acquireTexture(id, width, height);
+int textureId = await PhotosNative.acquireTexture(id, width, height);
 
-    // usage
-    Container(child: Texture(textureId: textureId));
+// usage
+Container(child: Texture(textureId: textureId));
 ```
 
 ### Release image texture
 
 ```dart
-    await PhotosNative.releaseTexture(id);
+await PhotosNative.releaseTexture(id);
 ```
