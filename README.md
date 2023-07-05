@@ -120,7 +120,7 @@ See [PHGallery]() for more details
 
 ### Get thumnail
 
-Return photo thumnail image descriptor
+Return thumbnail image descriptor
 
 ```dart
 final descriptor = await PhotosNative.getThumbnail(200, 200, 'id');
@@ -134,10 +134,10 @@ See class [PHImageDescription]() for more details
 
 ### 1.4 Get photo image descriptor
 
-Return photo image descriptor
+Return image descriptor of a photo
     
 ```dart
-    final descriptor = await PhotosNative.getPixels('photo_id');
+final descriptor = await PhotosNative.getPixels('photo_id');
 ```
 
 See class [PHImageDescription] for more details
