@@ -118,7 +118,7 @@ final gallery = await PhotosNative.loadGallery(title: 'All Photos');
 
 See [PHGallery]() for more details
 
-### Get thumnail
+### Get thumbnail image descriptor
 
 Return thumbnail image descriptor
 
@@ -132,7 +132,7 @@ final descriptor = await PhotosNative.getThumbnail(200, 200, 'image uri');
 
 See class [PHImageDescription]() for more details
 
-### 1.4 Get photo image descriptor
+### Get image descriptor
 
 Return image descriptor of a photo
     
