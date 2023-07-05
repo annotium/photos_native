@@ -187,6 +187,4 @@ await PhotosNative.releaseTexture(id);
 ## Author
 This photo plugin for Flutter is developed by [Annotium](https://annotium.github.io/). You can contact us at annotium@gmail.com
 
-## PS
-
-Contributions are greatly welcome! ;-).
+Contributions are warmly welcome! :sunglasses:.
