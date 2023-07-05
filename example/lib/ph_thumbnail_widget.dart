@@ -17,7 +17,7 @@ class PHThumbnailWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isize = size.toInt();
 
-    return FutureBuilder<PHImageDescription>(
+    return FutureBuilder<PHImageDescriptor>(
         future: FlutterPhotoNative.getThumbnail(
           id: item.id,
           uri: item.uri.toString(),
@@ -26,7 +26,7 @@ class PHThumbnailWidget extends StatelessWidget {
         ),
         builder: (
           BuildContext context,
-          AsyncSnapshot<PHImageDescription> snapshot,
+          AsyncSnapshot<PHImageDescriptor> snapshot,
         ) {
           if (snapshot.connectionState == ConnectionState.done) {
             final imageDescriptor = snapshot.data;

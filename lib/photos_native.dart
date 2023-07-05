@@ -22,7 +22,7 @@ class FlutterPhotoNative {
   static Future<PHGallery> loadGallery({required String title}) =>
       PhotosNativePlatform.instance.loadGallery(title: title);
 
-  static Future<PHImageDescription> getThumbnail(
+  static Future<PHImageDescriptor> getThumbnail(
     int width,
     int height, {
     String? id,
@@ -31,7 +31,7 @@ class FlutterPhotoNative {
       PhotosNativePlatform.instance
           .getThumbnail(width, height, id: id, uri: uri);
 
-  static Future<PHImageDescription> getPixels(
+  static Future<PHImageDescriptor> getPixels(
     String id, {
     String? uri,
     int maxSize = kImageMaxSize,

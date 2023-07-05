@@ -41,12 +41,12 @@ abstract class PhotosNativePlatform extends PlatformInterface {
     throw UnimplementedError('loadGallery() has not been implemented.');
   }
 
-  Future<PHImageDescription> getThumbnail(int width, int height,
+  Future<PHImageDescriptor> getThumbnail(int width, int height,
       {String? id, String? uri}) {
     throw UnimplementedError('getThumbnail() has not been implemented.');
   }
 
-  Future<PHImageDescription> getPixels(
+  Future<PHImageDescriptor> getPixels(
     String id, {
     String? uri,
     required int maxSize,

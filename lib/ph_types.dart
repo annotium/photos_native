@@ -49,8 +49,8 @@ class PHAlbum {
   int get count => items.length;
 }
 
-/// Photo image description
-class PHImageDescription {
+/// Image descriptor
+class PHImageDescriptor {
   /// Image width
   final int width;
 
@@ -60,15 +60,15 @@ class PHImageDescription {
   /// Image data in bytes
   final Uint8List data;
 
-  PHImageDescription({
+  PHImageDescriptor({
     required this.width,
     required this.height,
     required this.data,
   });
 
   /// Factory constructor from platform codec message
-  factory PHImageDescription.fromCodecMessage(Map<String, dynamic> message) =>
-      PHImageDescription(
+  factory PHImageDescriptor.fromCodecMessage(Map<String, dynamic> message) =>
+      PHImageDescriptor(
         width: message[Keys.width] as int,
         height: message[Keys.height] as int,
         data: message[Keys.data] as Uint8List,

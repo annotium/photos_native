@@ -75,9 +75,9 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   /// [id] ID of the photo
   /// [uri] URI of the photo
   ///
-  /// [PHImageDescription] thumbnail image descriptor
+  /// [PHImageDescriptor] thumbnail image descriptor
   @override
-  Future<PHImageDescription> getThumbnail(
+  Future<PHImageDescriptor> getThumbnail(
     int width,
     int height, {
     String? id,
@@ -85,7 +85,7 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   }) {
     assert(id != null || uri != null, "Id or uri must be provided");
 
-    return _invokeMethod<PHImageDescription>(
+    return _invokeMethod<PHImageDescriptor>(
       method: Functions.getThumbnail,
       arguments: {
         Arguments.id: id,
@@ -93,7 +93,7 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
         Arguments.width: width,
         Arguments.height: height,
       },
-      postProcess: (value) => PHImageDescription.fromCodecMessage(
+      postProcess: (value) => PHImageDescriptor.fromCodecMessage(
         Map<String, dynamic>.from(value),
       ),
     );
@@ -107,9 +107,9 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   /// be resized to the given size
   /// [isPath]
   ///
-  /// [PHImageDescription] image descriptor
+  /// [PHImageDescriptor] image descriptor
   @override
-  Future<PHImageDescription> getPixels(
+  Future<PHImageDescriptor> getPixels(
     String id, {
     String? uri,
     required int maxSize,
@@ -117,7 +117,7 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   }) {
     assert(id.isNotEmpty || uri != null, "Id or uri must be provided");
 
-    return _invokeMethod<PHImageDescription>(
+    return _invokeMethod<PHImageDescriptor>(
       method: Functions.getPixels,
       arguments: {
         Arguments.id: id,
@@ -125,7 +125,7 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
         Arguments.maxSize: maxSize,
         Arguments.isPath: isPath
       },
-      postProcess: (value) => PHImageDescription.fromCodecMessage(
+      postProcess: (value) => PHImageDescriptor.fromCodecMessage(
         Map<String, dynamic>.from(value),
       ),
     );

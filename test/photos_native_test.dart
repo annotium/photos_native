@@ -25,13 +25,13 @@ class MockPhotosNativePlatform
   }
 
   @override
-  Future<PHImageDescription> getPixels(String id,
+  Future<PHImageDescriptor> getPixels(String id,
       {String? uri, required int maxSize, bool isPath = false}) {
     throw UnimplementedError();
   }
 
   @override
-  Future<PHImageDescription> getThumbnail(int width, int height,
+  Future<PHImageDescriptor> getThumbnail(int width, int height,
       {String? id, String? uri}) {
     throw UnimplementedError();
   }

@@ -140,7 +140,7 @@ Return image descriptor of a photo
 final descriptor = await PhotosNative.getPixels('photo_id');
 ```
 
-See class [PHImageDescription] for more details
+See class [PHImageDescription]() for more details
 
 ### Delete images
 
@@ -183,3 +183,10 @@ Container(child: Texture(textureId: textureId));
 ```dart
 await PhotosNative.releaseTexture(id);
 ```
+
+## PS
+
+Contributions are greatly welcome! ;-).
+
+If you got any problem, please create an issue on [Github Issue](https://github.com/annotium/photos_native/issues)
+
