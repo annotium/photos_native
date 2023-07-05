@@ -8,6 +8,10 @@ A Flutter native plugin for photo library.
 
 `photos_native` is high performance, yet easy to use photo library plugin, working on Android and iOS. It can load albums, load image/thumnail, save, share... photo images. 
 
+| iOS                   |            Android            |
+| --------------------- | ----------------------------- |
+| ![ios](ios.jpg "iOS") | ![android](android.jpg "iOS") |
+
 ### Install
 
 1. With Flutter:
