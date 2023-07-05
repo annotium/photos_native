@@ -1,0 +1,31 @@
+name: photos_native
+description: A native photos plugin for Flutter.
+version: 0.0.1
+homepage: https://annotium.github.io
+
+environment:
+  sdk: '>=2.19.5 <3.0.0'
+  flutter: ">=2.5.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.2
+  crypto:
+  equatable: ^2.0.5
+  permission_handler: ^10.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+# The following section is specific to Flutter packages.
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: dev.annotium.photos_native
+        pluginClass: PhotosNativePlugin
+      ios:
+        pluginClass: PhotosNativePlugin

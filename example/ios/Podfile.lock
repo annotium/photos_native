@@ -1,0 +1,28 @@
+PODS:
+  - Flutter (1.0.0)
+  - permission_handler_apple (9.1.1):
+    - Flutter
+  - photos_native (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - photos_native (from `.symlinks/plugins/photos_native/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
+  photos_native:
+    :path: ".symlinks/plugins/photos_native/ios"
+
+SPEC CHECKSUMS:
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
+  photos_native: 48a11be620d4bcf362df4aa85cd5d80f5c9f54c9
+
+PODFILE CHECKSUM: d16f5e15479e22b6657c2d1530c1ef78a95ec680
+
+COCOAPODS: 1.12.0
