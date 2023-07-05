@@ -54,8 +54,8 @@ to your `AndroidManifest.xml` in order to obtain resources:
 
 </details>  
 
-<summary>iOS</summary>
 <details>
+<summary>iOS</summary>
 1. Add the following to your `Podfile` file:
 
 ```ruby
