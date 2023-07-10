@@ -73,8 +73,7 @@ class MockPhotosNativePlatform
   }
 
   @override
-  Future<bool> share(
-      Uint8List bytes, int width, int height, double devicePixelRatio,
+  Future<bool> share(Uint8List bytes, int width, int height,
       {String title = ""}) {
     throw UnimplementedError();
   }

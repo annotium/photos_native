@@ -99,7 +99,7 @@ end
 
 Default album is `All Photos` which contains all photos in gallery (user can select any name to default albums)
 
-[PHImageDescription]() is a image descriptor, [PHImageDescription]() contain pixel bytes, width and height of the image.
+[PHImageDescriptor]() is a image descriptor, [PHImageDescriptor]() contain pixel bytes, width and height of the image.
 
 ### Request permission
 
@@ -130,7 +130,7 @@ final descriptor = await PhotosNative.getThumbnail(200, 200, 'id');
 final descriptor = await PhotosNative.getThumbnail(200, 200, 'image uri');
 ```
 
-See class [PHImageDescription]() for more details
+See class [PHImageDescriptor]() for more details
 
 ### Get image descriptor
 
@@ -140,7 +140,7 @@ Return image descriptor of a photo
 final descriptor = await PhotosNative.getPixels('photo_id');
 ```
 
-See class [PHImageDescription]() for more details
+See class [PHImageDescriptor]() for more details
 
 ### Delete images
 
@@ -162,7 +162,7 @@ await PhotosNative.save(bytes, width, height, path: path);
 Share image with other apps
 
 ```dart
-await PhotosNative.share(bytes, width, height, devicePixelRatio);
+await PhotosNative.share(bytes, width, height);
 ```
 
 ## Experiment

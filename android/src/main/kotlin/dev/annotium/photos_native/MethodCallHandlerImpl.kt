@@ -135,15 +135,10 @@ class MethodCallHandlerImpl
         height: Int,
         mime: String,
         quality: Int,
-        directory: String?,
-        path: String?,
-        overwrite: Boolean,
         resultHandler: ResultHandler,
     ) {
-        val isPhoto = directory.isNullOrEmpty() && path.isNullOrEmpty()
         mainScope.launch {
-            val saveResult = if (isPhoto) {
-                PhotoManager.getInstance().save(
+            val saveResult = PhotoManager.getInstance().save(
                     context,
                     data,
                     width,
@@ -152,20 +147,7 @@ class MethodCallHandlerImpl
                     quality,
                     poolDispatcher
                 )
-            } else {
-                PhotoManager.getInstance().saveDocument(
-                    context,
-                    data,
-                    width,
-                    height,
-                    mime,
-                    quality,
-                    directory,
-                    path,
-                    overwrite,
-                    poolDispatcher
-                )
-            }
+
 
             saveResult.onSuccess {
                 resultHandler.success(true)

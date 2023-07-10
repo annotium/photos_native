@@ -50,7 +50,6 @@ abstract class PhotosNativePlatform extends PlatformInterface {
     String id, {
     String? uri,
     required int maxSize,
-    bool isPath = false,
   }) {
     throw UnimplementedError('getPixels() has not been implemented.');
   }
@@ -63,12 +62,8 @@ abstract class PhotosNativePlatform extends PlatformInterface {
     Uint8List bytes,
     int width,
     int height, {
+    required int quality,
     String? mime,
-    int quality = 80,
-    double? devicePixelRatio = 1.0,
-    String? directory,
-    String? path,
-    bool overwrite = false,
   }) {
     throw UnimplementedError('save() has not been implemented.');
   }
@@ -76,8 +71,7 @@ abstract class PhotosNativePlatform extends PlatformInterface {
   Future<bool> share(
     Uint8List bytes,
     int width,
-    int height,
-    double devicePixelRatio, {
+    int height, {
     String title = "",
   }) {
     throw UnimplementedError('share() has not been implemented.');
@@ -85,14 +79,6 @@ abstract class PhotosNativePlatform extends PlatformInterface {
 
   Future<bool> launchUrl(String url) {
     throw UnimplementedError('launchUrl() has not been implemented.');
-  }
-
-  Future<String?> getInitialImage() {
-    throw UnimplementedError('getInitialImage() has not been implemented.');
-  }
-
-  Future<bool> isMediaStoreChanged() {
-    throw UnimplementedError('isMediaStoreChanged() has not been implemented.');
   }
 
   Future<PHVersion> getVersion() {

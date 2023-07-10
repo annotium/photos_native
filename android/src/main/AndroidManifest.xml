@@ -3,6 +3,19 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <application>
+        <provider
+            android:name="dev.annotium.photos_native.fileprovider"
+            android:authorities="${applicationId}.flutter.photos_native"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/flutter_photos_native_file_path" />
+        </provider>
+    </application>
+
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />

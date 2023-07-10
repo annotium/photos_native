@@ -217,9 +217,6 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         val mime = call.argument<String>(Constants.Arguments.MIME)!!
         val quality = call.argument<Int>(Constants.Arguments.QUALITY)
           ?: Constants.DEFAULT_QUALITY
-        val directory = call.argument<String>(Constants.Arguments.DIRECTORY)
-        val path = call.argument<String>(Constants.Arguments.PATH)
-        val overwrite = call.argument<Boolean>(Constants.Arguments.OVERWRITE) ?: false
 
         methodCallHandler?.save(
           activity,
@@ -228,9 +225,6 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
           height,
           mime,
           quality,
-          directory,
-          path,
-          overwrite,
           resultHandler,
         )
       }
