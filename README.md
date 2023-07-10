@@ -10,7 +10,7 @@ A Flutter native plugin for photo library.
 
 | iOS                          |                Android               |
 | ---------------------------- | ------------------------------------ |
-| ![ios](images/ios.jpg "iOS") | ![android](images/android.jpg "iOS") |
+| ![ios]([images/ios.jpg](https://github.com/annotium/photos_native/raw/main/images/ios.jpg) "iOS") | ![android](https://github.com/annotium/photos_native/raw/main/images/android.jpg "iOS") |
 
 ### Install
 
