@@ -6,13 +6,13 @@
 
     <application>
         <provider
-            android:name="dev.annotium.photos_native.fileprovider"
-            android:authorities="${applicationId}.flutter.photos_native"
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.photos_native.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/flutter_photos_native_file_path" />
+                android:resource="@xml/fileprovider" />
         </provider>
     </application>
 

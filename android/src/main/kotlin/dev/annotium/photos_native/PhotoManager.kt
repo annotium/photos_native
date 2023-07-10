@@ -300,8 +300,9 @@ class PhotoManager {
                 toStream(outputStream, data, width, height, quality)
             }
 
+            val providerId = appContext.packageName + ".photos_native.fileprovider"
             return@withContext Result.success(
-                FileProvider.getUriForFile(appContext, Constants.FILE_PROVIDER_ID, file)
+                FileProvider.getUriForFile(appContext, providerId, file)
             )
         }
         catch (e: Exception) {
