@@ -20,11 +20,6 @@ class MockPhotosNativePlatform
   }
 
   @override
-  Future<String?> getInitialImage() {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<PHImageDescriptor> getPixels(String id,
       {String? uri, required int maxSize, bool isPath = false}) {
     throw UnimplementedError();
@@ -38,11 +33,6 @@ class MockPhotosNativePlatform
 
   @override
   Future<PHVersion> getVersion() {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> isMediaStoreChanged() {
     throw UnimplementedError();
   }
 
