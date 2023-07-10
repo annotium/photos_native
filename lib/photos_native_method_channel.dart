@@ -113,7 +113,6 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     String id, {
     String? uri,
     required int maxSize,
-    bool isPath = false,
   }) {
     assert(id.isNotEmpty || uri != null, "Id or uri must be provided");
 
@@ -123,7 +122,6 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
         Arguments.id: id,
         Arguments.uri: uri,
         Arguments.maxSize: maxSize,
-        Arguments.isPath: isPath
       },
       postProcess: (value) => PHImageDescriptor.fromCodecMessage(
         Map<String, dynamic>.from(value),
@@ -157,7 +155,6 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   /// [mime] MIME type of the save image
   /// [quality] quality of the save image, maximum is 100, size of saved image
   /// will be directly proportional to the quality
-  /// [devicePixelRatio] device pixel ratio
   /// [directory] directory to save
   /// [path] path to save (only one of [directory]/[path] is used)
   /// [overwrite] overwrite the existing photo
@@ -168,12 +165,8 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     Uint8List bytes,
     int width,
     int height, {
+    required int quality,
     String? mime,
-    int quality = 80,
-    double? devicePixelRatio = 1.0,
-    String? directory,
-    String? path,
-    bool overwrite = false,
   }) =>
       _invokeMethod<bool>(method: Functions.savePhoto, arguments: {
         Arguments.data: bytes,
@@ -181,10 +174,6 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
         Arguments.height: height,
         Arguments.mime: mime,
         Arguments.quality: quality,
-        Arguments.devicePixelRatio: devicePixelRatio,
-        Arguments.directory: directory,
-        Arguments.path: path,
-        Arguments.overwrite: overwrite,
       });
 
   /// Share photo, on Android, it will invoke shared [Intent], on iOS it will
@@ -200,15 +189,13 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   Future<bool> share(
     Uint8List bytes,
     int width,
-    int height,
-    double devicePixelRatio, {
+    int height, {
     String title = "",
   }) =>
       _invokeMethod<bool>(method: Functions.sharePhoto, arguments: {
         Arguments.data: bytes,
         Arguments.width: width,
         Arguments.height: height,
-        Arguments.devicePixelRatio: devicePixelRatio,
         Arguments.title: title
       });
 
@@ -228,15 +215,6 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   @override
   Future<bool> launchUrl(String url) => _invokeMethod<bool>(
       method: Functions.launchUrl, arguments: {Arguments.url: url});
-
-  @override
-  Future<String?> getInitialImage() => _invokeMethod<String?>(
-        method: Functions.getInitialPath,
-      );
-
-  @override
-  Future<bool> isMediaStoreChanged() =>
-      _invokeMethod<bool>(method: Functions.isMediaStoreChanged);
 
   /// Private utility function to invoke dynamic platform method
   ///

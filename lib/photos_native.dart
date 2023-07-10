@@ -35,10 +35,8 @@ class FlutterPhotoNative {
     String id, {
     String? uri,
     int maxSize = kImageMaxSize,
-    bool isPath = false,
   }) =>
-      PhotosNativePlatform.instance
-          .getPixels(id, uri: uri, maxSize: maxSize, isPath: isPath);
+      PhotosNativePlatform.instance.getPixels(id, uri: uri, maxSize: maxSize);
 
   static Future<int> delete(List<String> ids) =>
       PhotosNativePlatform.instance.delete(ids);
@@ -49,40 +47,23 @@ class FlutterPhotoNative {
     int height, {
     String? mime,
     int quality = 80,
-    double? devicePixelRatio = 1.0,
-    String? directory,
-    String? path,
-    bool overwrite = false,
   }) =>
-      PhotosNativePlatform.instance.save(bytes, width, height,
-          mime: mime,
-          quality: quality,
-          devicePixelRatio: devicePixelRatio,
-          directory: directory,
-          path: path,
-          overwrite: overwrite);
+      PhotosNativePlatform.instance
+          .save(bytes, width, height, mime: mime, quality: quality);
 
   static Future<bool> share(
     Uint8List bytes,
     int width,
-    int height,
-    double devicePixelRatio, {
+    int height, {
     String title = "",
   }) =>
-      PhotosNativePlatform.instance
-          .share(bytes, width, height, devicePixelRatio, title: title);
+      PhotosNativePlatform.instance.share(bytes, width, height, title: title);
 
   static Future<PHVersion> getVersion() =>
       PhotosNativePlatform.instance.getVersion();
 
   static Future<bool> launchUrl(String url) =>
       PhotosNativePlatform.instance.launchUrl(url);
-
-  static Future<String?> getInitialImage() =>
-      PhotosNativePlatform.instance.getInitialImage();
-
-  static Future<bool> isMediaStoreChanged() =>
-      PhotosNativePlatform.instance.isMediaStoreChanged();
 
   static Future<int> acquireTexture(String id, int width, int height) =>
       acquireTexture(id, width, height);

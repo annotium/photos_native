@@ -49,7 +49,7 @@ class PHAlbum {
   int get count => items.length;
 }
 
-/// Image descriptor
+/// Photo image description
 class PHImageDescriptor {
   /// Image width
   final int width;

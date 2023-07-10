@@ -10,8 +10,6 @@ class Functions {
   static const sharePhoto = "share";
   static const getVersion = "getVersion";
   static const launchUrl = "launchUrl";
-  static const getInitialPath = "getInitialPath";
-  static const isMediaStoreChanged = "isMediaStoreChanged";
 
   // trial
   static const acquireTexture = "acquireTexture";
@@ -32,12 +30,7 @@ class Arguments {
   static const path = "path";
   static const name = "name";
   static const url = "url";
-  static const devicePixelRatio = "devicePixelRatio";
   static const title = "title";
-  static const radian = "radian";
-  static const vertical = "vertical";
-  static const isPath = "isPath";
-  static const overwrite = "overwrite";
 }
 
 class Keys {
