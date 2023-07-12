@@ -113,21 +113,6 @@ class MethodCallHandlerImpl
         }
     }
 
-//    private fun loadTarget(target: FutureTarget<Bitmap>, resultHandler: ResultHandler) {
-//        try {
-//            val bitmap = target.get()
-//            val data = ByteArray(bitmap.allocationByteCount)
-//            bitmap.copyPixelsToBuffer(ByteBuffer.wrap(data))
-//            val phDesc = PHImageDescriptor(bitmap.width, bitmap.height, data)
-//            resultHandler.success(phDesc.toMessageCodec())
-//        } catch (e: Exception) {
-//            Log.e(Constants.Errors.UNKNOWN, e.localizedMessage ?: "")
-//            resultHandler.error(Constants.Errors.UNKNOWN, e.localizedMessage, e.stackTrace)
-//        }
-//
-//        target.cancel(false)
-//    }
-
     fun save(
         context: Context,
         data: ByteArray,
@@ -315,4 +300,19 @@ class MethodCallHandlerImpl
         }
         textureMap.clear()
     }
+
+//    private fun loadTarget(target: FutureTarget<Bitmap>, resultHandler: ResultHandler) {
+//        try {
+//            val bitmap = target.get()
+//            val data = ByteArray(bitmap.allocationByteCount)
+//            bitmap.copyPixelsToBuffer(ByteBuffer.wrap(data))
+//            val phDesc = PHImageDescriptor(bitmap.width, bitmap.height, data)
+//            resultHandler.success(phDesc.toMessageCodec())
+//        } catch (e: Exception) {
+//            Log.e(Constants.Errors.UNKNOWN, e.localizedMessage ?: "")
+//            resultHandler.error(Constants.Errors.UNKNOWN, e.localizedMessage, e.stackTrace)
+//        }
+//
+//        target.cancel(false)
+//    }
 }
