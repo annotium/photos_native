@@ -14,6 +14,7 @@ import androidx.core.content.FileProvider
 import com.bumptech.glide.request.FutureTarget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.OutputStream
 import java.nio.ByteBuffer
@@ -222,6 +223,27 @@ class PhotoManager {
             return@withContext Result.failure(e)
         }
     }
+
+    suspend fun encode(
+        data: ByteArray,
+        width: Int,
+        height: Int,
+        mime: String,
+        quality: Int,
+        context: CoroutineContext = Dispatchers.IO):
+            Result<ByteArray> = withContext(context) {
+        try {
+            ByteArrayOutputStream().use { outputStream ->
+                toStream(outputStream, data, width, height, quality, mime)
+                val buffer = outputStream.toByteArray()
+
+                return@withContext Result.success(buffer)
+            }
+        } catch (e: Exception) {
+            return@withContext Result.failure(e)
+        }
+    }
+
 
     suspend fun saveDocument(
         appContext: Context,

@@ -210,6 +210,23 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
           )
         }
       }
+      Constants.Functions.ENCODE -> {
+        val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
+        val width = call.argument<Int>(Constants.Arguments.WIDTH)!!
+        val height = call.argument<Int>(Constants.Arguments.HEIGHT)!!
+        val mime = call.argument<String>(Constants.Arguments.MIME)!!
+        val quality = call.argument<Int>(Constants.Arguments.QUALITY)
+          ?: Constants.DEFAULT_QUALITY
+
+        methodCallHandler?.encode(
+          data,
+          width,
+          height,
+          mime,
+          quality,
+          resultHandler,
+        )
+      }
       Constants.Functions.SAVE -> {
         val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
         val width = call.argument<Int>(Constants.Arguments.WIDTH)!!

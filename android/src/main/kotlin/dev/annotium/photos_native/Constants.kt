@@ -9,6 +9,7 @@ object Constants {
         const val GET_THUMBNAIL = "getThumbnail"
         const val DELETE = "delete"
         const val SAVE = "save"
+        const val ENCODE = "encode"
         const val SHARE = "share"
         const val GET_VERSION = "getVersion"
         const val LAUNCH_URL = "launchUrl"
@@ -36,9 +37,6 @@ object Constants {
         const val URL = "url"
         const val URI = "uri"
         const val TITLE = "title"
-        const val DIRECTORY = "directory"
-        const val PATH = "path"
-        const val OVERWRITE = "overwrite"
     }
     
     object Errors {

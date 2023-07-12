@@ -77,6 +77,12 @@ class MockPhotosNativePlatform
   Future<void> releaseTexture(String id) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<Uint8List> encode(Uint8List bytes, int width, int height,
+      {required int quality, String? mime}) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

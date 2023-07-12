@@ -155,9 +155,6 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   /// [mime] MIME type of the save image
   /// [quality] quality of the save image, maximum is 100, size of saved image
   /// will be directly proportional to the quality
-  /// [directory] directory to save
-  /// [path] path to save (only one of [directory]/[path] is used)
-  /// [overwrite] overwrite the existing photo
   ///
   /// return true if successful otherwise false
   @override
@@ -169,6 +166,32 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     String? mime,
   }) =>
       _invokeMethod<bool>(method: Functions.savePhoto, arguments: {
+        Arguments.data: bytes,
+        Arguments.width: width,
+        Arguments.height: height,
+        Arguments.mime: mime,
+        Arguments.quality: quality,
+      });
+
+  /// Encode(or compress) image data to given format/inputs
+  ///
+  /// [bytes] image data to save
+  /// [width] width of save image
+  /// [height] height of save image
+  /// [mime] MIME type of the save image
+  /// [quality] quality of the save image, maximum is 100, size of saved image
+  /// will be directly proportional to the quality
+  ///
+  /// return byte array of encoded image if successful otherwise exception will be thrown
+  @override
+  Future<Uint8List> encode(
+    Uint8List bytes,
+    int width,
+    int height, {
+    required int quality,
+    String? mime,
+  }) =>
+      _invokeMethod<Uint8List>(method: Functions.encode, arguments: {
         Arguments.data: bytes,
         Arguments.width: width,
         Arguments.height: height,

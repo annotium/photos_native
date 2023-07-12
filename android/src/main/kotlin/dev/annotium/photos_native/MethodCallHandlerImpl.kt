@@ -162,6 +162,37 @@ class MethodCallHandlerImpl
         }
     }
 
+    fun encode(
+        data: ByteArray,
+        width: Int,
+        height: Int,
+        mime: String,
+        quality: Int,
+        resultHandler: ResultHandler,
+    ) {
+        mainScope.launch {
+            val result = PhotoManager.getInstance().encode(
+                data,
+                width,
+                height,
+                mime,
+                quality,
+                poolDispatcher
+            )
+
+            result.onSuccess {
+                resultHandler.success(it)
+            }
+                .onFailure {
+                    resultHandler.error(
+                        Constants.Errors.UNKNOWN,
+                        it.localizedMessage,
+                        it.stackTrace
+                    )
+                }
+        }
+    }
+
     fun share(
         context: Context,
         data: ByteArray,

@@ -7,6 +7,7 @@ class Functions {
   static const getPixels = "getPixels";
   static const deletePhotos = "delete";
   static const savePhoto = "save";
+  static const encode = "encode";
   static const sharePhoto = "share";
   static const getVersion = "getVersion";
   static const launchUrl = "launchUrl";
