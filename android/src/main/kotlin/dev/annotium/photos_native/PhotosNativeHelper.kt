@@ -6,7 +6,7 @@ import android.content.Context
 import android.os.Environment
 import java.io.File
 
-object AnnotiumHelper {
+object PhotosNativeHelper {
     private const val IMAGES = "images"
 
     fun getExternalCachedPath(context: Context): File {

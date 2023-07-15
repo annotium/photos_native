@@ -125,7 +125,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
     if (intent.type?.startsWith("image/") == true) {
       when (intent.action) {
         Intent.ACTION_SEND -> {
-          val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+          val uri = intent.parcelable<Uri>(Intent.EXTRA_STREAM)
           _sharedUri = uri?.toString()
         }
 
@@ -232,6 +232,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         val width = call.argument<Int>(Constants.Arguments.WIDTH)!!
         val height = call.argument<Int>(Constants.Arguments.HEIGHT)!!
         val mime = call.argument<String>(Constants.Arguments.MIME)!!
+        val album = call.argument<String>(Constants.Arguments.ALBUM)
         val quality = call.argument<Int>(Constants.Arguments.QUALITY)
           ?: Constants.DEFAULT_QUALITY
 
@@ -241,6 +242,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
           width,
           height,
           mime,
+          album,
           quality,
           resultHandler,
         )
@@ -315,7 +317,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
     }
 
     applicationContext?.let { context ->
-      val info = context.packageManager.getPackageInfo(
+      val info = context.packageManager.getPackageInfoCompat(
         context.packageName,
         PackageManager.GET_ACTIVITIES
       )

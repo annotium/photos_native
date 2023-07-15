@@ -33,6 +33,7 @@ object Constants {
         const val HEIGHT = "height"
         const val MAXSIZE = "maxSize"
         const val MIME = "mime"
+        const val ALBUM = "album"
         const val QUALITY = "quality"
         const val URL = "url"
         const val URI = "uri"

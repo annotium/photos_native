@@ -19,7 +19,7 @@ object IntentHelper {
         val curPackageName = context.packageName
         val chooserIntent: Intent?
 
-        val compatibleActivities = context.packageManager.queryIntentActivities(
+        val compatibleActivities = context.packageManager.queryIntentActivitiesCompat(
             shareIntent, MATCH_DEFAULT_ONLY
         )
 

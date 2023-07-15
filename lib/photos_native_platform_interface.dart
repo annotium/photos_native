@@ -63,6 +63,7 @@ abstract class PhotosNativePlatform extends PlatformInterface {
     int width,
     int height, {
     required int quality,
+    String? album,
     String? mime,
   }) {
     throw UnimplementedError('save() has not been implemented.');

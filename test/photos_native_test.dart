@@ -52,13 +52,14 @@ class MockPhotosNativePlatform
   }
 
   @override
-  Future<bool> save(Uint8List bytes, int width, int height,
-      {String? mime,
-      int quality = 80,
-      double? devicePixelRatio = 1.0,
-      String? directory,
-      String? path,
-      bool overwrite = false}) {
+  Future<bool> save(
+    Uint8List bytes,
+    int width,
+    int height, {
+    String? mime,
+    String? album,
+    int quality = 80,
+  }) {
     throw UnimplementedError();
   }
 

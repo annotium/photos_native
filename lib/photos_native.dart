@@ -45,11 +45,12 @@ class FlutterPhotoNative {
     Uint8List bytes,
     int width,
     int height, {
+    String? album,
     String? mime,
     int quality = 80,
   }) =>
-      PhotosNativePlatform.instance
-          .save(bytes, width, height, mime: mime, quality: quality);
+      PhotosNativePlatform.instance.save(bytes, width, height,
+          mime: mime, quality: quality, album: album);
 
   static Future<Uint8List> encode(
     Uint8List bytes,

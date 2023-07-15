@@ -4,7 +4,7 @@ version: 0.0.2
 homepage: https://annotium.github.io
 
 environment:
-  sdk: '>=2.19.5 <4.0.0'
+  sdk: '^3.0.0'
   flutter: ">=2.5.0"
 
 dependencies:

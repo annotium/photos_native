@@ -119,6 +119,7 @@ class MethodCallHandlerImpl
         width: Int,
         height: Int,
         mime: String,
+        album: String?,
         quality: Int,
         resultHandler: ResultHandler,
     ) {
@@ -129,6 +130,7 @@ class MethodCallHandlerImpl
                     width,
                     height,
                     mime,
+                    album,
                     quality,
                     poolDispatcher
                 )

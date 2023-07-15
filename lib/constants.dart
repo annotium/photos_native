@@ -24,9 +24,10 @@ class Arguments {
   static const width = "width";
   static const height = "height";
   static const mime = "mime";
+  static const album = "album";
+
   static const quality = "quality";
   static const maxSize = "maxSize";
-  static const directory = "directory";
   static const uri = "uri";
   static const path = "path";
   static const name = "name";

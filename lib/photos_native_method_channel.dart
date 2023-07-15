@@ -163,12 +163,14 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     int width,
     int height, {
     required int quality,
+    String? album,
     String? mime,
   }) =>
       _invokeMethod<bool>(method: Functions.savePhoto, arguments: {
         Arguments.data: bytes,
         Arguments.width: width,
         Arguments.height: height,
+        Arguments.album: album,
         Arguments.mime: mime,
         Arguments.quality: quality,
       });

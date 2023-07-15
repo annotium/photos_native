@@ -4,4 +4,4 @@ package dev.annotium.photos_native
 
 import androidx.core.content.FileProvider
 
-class AnnotiumFileProvider: FileProvider()
+class PhotosNativeFileProvider: FileProvider()
