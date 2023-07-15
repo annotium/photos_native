@@ -13,8 +13,9 @@ object Constants {
         const val SHARE = "share"
         const val GET_VERSION = "getVersion"
         const val LAUNCH_URL = "launchUrl"
-        const val GET_INITIAL_PATH = "getInitialPath"
         const val IS_MEDIA_STORE_CHANGED = "isMediaStoreChanged"
+        const val SET_MEMO = "setMemo";
+        const val GET_MEMO = "getMemo";
 
         // trial
         const val ACQUIRE_TEXTURE = "acquireTexture"
@@ -38,6 +39,12 @@ object Constants {
         const val URL = "url"
         const val URI = "uri"
         const val TITLE = "title"
+        const val KEY = "key"
+        const val VALUE = "value"
+    }
+
+    object Keys {
+        const val SHARED_URI = "dev.annotium.photos_native.shared_uri";
     }
     
     object Errors {
@@ -71,9 +78,7 @@ object Constants {
     const val SDK_INT = "sdkInt"
 
     const val TAG = "PhotosNative"
-//    const val ANNOTIUM = "Annotium"
     const val PICTURES_PATH = "Pictures/"
-    const val FILE_PROVIDER_ID = "dev.annotium.photos_native.fileprovider"
     const val DEFAULT_NAME = "Annotium"
     const val CHANNEL_NAME = "photos_native"
 }

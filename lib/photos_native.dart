@@ -16,6 +16,12 @@ class FlutterPhotoNative {
   static Future<String?> getPlatformVersion() =>
       PhotosNativePlatform.instance.getPlatformVersion();
 
+  static Future<T?> getMemo<T>(String key) =>
+      PhotosNativePlatform.instance.getMemo(key);
+
+  static Future<bool> setMemo<T>(String key, T value) =>
+      PhotosNativePlatform.instance.setMemo(key, value);
+
   static Future<bool> requestPermissions() =>
       PhotosNativePlatform.instance.requestPermissions();
 

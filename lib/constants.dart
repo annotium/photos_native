@@ -11,6 +11,8 @@ class Functions {
   static const sharePhoto = "share";
   static const getVersion = "getVersion";
   static const launchUrl = "launchUrl";
+  static const setMemo = "setMemo";
+  static const getMemo = "getMemo";
 
   // trial
   static const acquireTexture = "acquireTexture";
@@ -33,6 +35,8 @@ class Arguments {
   static const name = "name";
   static const url = "url";
   static const title = "title";
+  static const key = "key";
+  static const value = "value";
 }
 
 class Keys {

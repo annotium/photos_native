@@ -84,6 +84,16 @@ class MockPhotosNativePlatform
       {required int quality, String? mime}) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<T?> getMemo<T>(String key) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setMemo<T>(String key, T value) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

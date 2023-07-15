@@ -29,6 +29,22 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     return version;
   }
 
+  @override
+  Future<T?> getMemo<T>(String key) async {
+    return await methodChannel.invokeMethod<T>(Functions.getMemo, {
+      Arguments.key: key,
+    });
+  }
+
+  @override
+  Future<bool> setMemo<T>(String key, T value) async {
+    return await methodChannel.invokeMethod<bool>(Functions.setMemo, {
+          Arguments.key: key,
+          Arguments.value: value,
+        }) ??
+        false;
+  }
+
   /// Ensure to requests photo library permission before access
   ///
   /// return true if permission is granted, otherwise false
