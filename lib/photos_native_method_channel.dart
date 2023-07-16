@@ -29,6 +29,9 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     return version;
   }
 
+  /// Temporarily key-value memo getter usage to share between platform and Flutter
+  ///
+  /// [String] key to get memo value
   @override
   Future<T?> getMemo<T>(String key) async {
     return await methodChannel.invokeMethod<T>(Functions.getMemo, {
@@ -36,8 +39,13 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     });
   }
 
+  /// Temporarily key-value memo setter usage to share between platform and Flutter
+  /// If value is null, then it will clear memo key
+  ///
+  /// [String] key
+  /// [String] value
   @override
-  Future<bool> setMemo<T>(String key, T value) async {
+  Future<bool> setMemo<T>(String key, T? value) async {
     return await methodChannel.invokeMethod<bool>(Functions.setMemo, {
           Arguments.key: key,
           Arguments.value: value,
