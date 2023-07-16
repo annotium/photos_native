@@ -49,7 +49,7 @@ class RawImageProvider extends ImageProvider<RawImageKey> {
 
   @override
   // ignore: override_on_non_overriding_member
-  ImageStreamCompleter loadImage(RawImageKey key, _) =>
+  ImageStreamCompleter loadImage(RawImageKey key, decode) =>
       _getStreamCompleter(key);
 
   @override
