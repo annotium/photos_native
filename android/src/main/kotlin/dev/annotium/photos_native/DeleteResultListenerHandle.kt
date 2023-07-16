@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.RecoverableSecurityException
 import android.content.*
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
@@ -18,15 +19,10 @@ import java.lang.Exception
 object DeleteHelper {
 	fun getHandle(activity: Activity): DeleteResultListenerHandle {
 		return when {
-			Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-				DeleteResultListenerHandleR(activity)
-			}
-			Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> {
-				DeleteResultListenerHandleQ(activity)
-			}
-			else -> {
-				DeleteResultListenerHandle(activity)
-			}
+			SDK_INT >= Build.VERSION_CODES.R -> DeleteResultListenerHandleR(activity)
+			SDK_INT == Build.VERSION_CODES.Q -> DeleteResultListenerHandleQ(activity)
+			else -> DeleteResultListenerHandle(activity)
+
 		}
 	}
 }

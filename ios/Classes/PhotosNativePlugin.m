@@ -8,11 +8,12 @@
 
 @implementation PhotosNativePlugin {
     PHManager* photoManager;
+    NSMutableDictionary* memoMap;
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"photos_native"
+      methodChannelWithName:LIBRARY_CHANNEL_NAME
             binaryMessenger:[registrar messenger]];
     PhotosNativePlugin* instance = [[PhotosNativePlugin alloc] initWithRegistrar: registrar];
     [registrar addMethodCallDelegate:instance channel:channel];
@@ -22,6 +23,7 @@
 - (instancetype) initWithRegistrar:(NSObject<FlutterPluginRegistrar>* _Nonnull)registrar {
     self = [super init];
     if (self) {
+        memoMap = [NSMutableDictionary init];
         photoManager = [PHManager initWithRegistrar: registrar];
     }
     
@@ -63,11 +65,20 @@
     else if ([FUNC_LAUNCH_URL isEqualToString:methodName]) {
         [UrlLauncher launchUrl:call.arguments resultHandler:resultHandler];
     }
-    else if ([FUNC_GET_INITIAL_PATH isEqualToString:methodName]) {
-        [photoManager getInitialImage:resultHandler];
-    }
     else if ([FUNC_IS_MEDIA_STORE_CHANGED isEqualToString:methodName]) {
         [photoManager isMediaStoreChanged:resultHandler];
+    }
+    else if ([FUNC_GET_MEMO isEqualToString:methodName]) {
+        NSString* key = call.arguments[ARG_KEY];
+        id value = [self getMemo:key];
+        [resultHandler reply:value];
+    }
+    else if ([FUNC_SET_MEMO isEqualToString:methodName]) {
+        NSString* key = call.arguments[ARG_KEY];
+        id value = call.arguments[ARG_VALUE];
+        BOOL result = [self setMemo:key value:value];
+        [resultHandler replyBool:result];
+
     }
     else if ([FUNC_ACQUIRE_TEXTURE isEqualToString:methodName]) {
         [photoManager acquireTexture:call.arguments resultHandler:resultHandler];
@@ -96,37 +107,65 @@
     //url = launchOptions[UIApplication.LaunchOptionsKey.url]
     NSURL* url = launchOptions[UIApplicationLaunchOptionsURLKey];
     if (url == nil) {
-//        NSDictionary* activityDictionary = launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey];
         return FALSE;
     }
-    else {
-        return [self handleUrl:url setInitialData:TRUE];
-    }
+    
+    return [self handleUrl:url];
 }
 
 - (BOOL) application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
-    return [self handleUrl:url setInitialData:FALSE];
+    return [self handleUrl:url];
 }
 
 - (BOOL) application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nonnull))restorationHandler {
-    return [self handleUrl:[userActivity webpageURL] setInitialData:TRUE];
+    return [self handleUrl:[userActivity webpageURL]];
 }
 
-- (BOOL) handleUrl:(NSURL*) url setInitialData:(BOOL)initialData
+- (BOOL) handleUrl:(NSURL*) url
 {
-    if (url != nil) {
-        NSUserDefaults* userDefaults = [[NSUserDefaults alloc] initWithSuiteName:ANNOTIUM_GROUP];
+    if (url == nil) {
+        return FALSE;
+    }
         
-        if ([TYPE_MEDIA isEqualToString:url.fragment]) {
-            NSArray<NSString*>* components = [url.host componentsSeparatedByString:@"="];
-            NSString* key = [components lastObject];
-            NSString* url = [userDefaults objectForKey:key];
-            photoManager.initialImage = [url stringByStandardizingPath];
+    if ([TYPE_MEDIA isEqualToString:url.fragment]) {
+        NSArray<NSString*>* components = [url.host componentsSeparatedByString:@"="];
+        NSString* key = [components lastObject];
+        NSUserDefaults* userDefaults = [[NSUserDefaults alloc] initWithSuiteName:ANNOTIUM_GROUP];
+        NSString* url = [userDefaults objectForKey:key];
+        NSString* path = [url stringByStandardizingPath];
+        if (path && path.length) {
+            [self setMemo:KEY_SHARED_URI value:path];
         }
     }
         
     return FALSE;
 }
+
+- (BOOL) setMemo:(NSString* _Nonnull) key value:(id) value {
+    if (!key.length) {
+        return FALSE;
+    }
+    
+    if (value == nil) {
+        [memoMap removeObjectForKey:key];
+    } else {
+        [memoMap setValue:value forKey:key];
+    }
+    
+    return TRUE;
+}
+
+- (id) getMemo:(NSString* _Nonnull) key {
+    if (!key.length) {
+        return nil;
+    }
+    
+    id value = [memoMap objectForKey:key];
+    [memoMap removeObjectForKey:key];
+
+    return value;
+}
+
 @end
 

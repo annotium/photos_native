@@ -16,6 +16,12 @@ class FlutterPhotoNative {
   static Future<String?> getPlatformVersion() =>
       PhotosNativePlatform.instance.getPlatformVersion();
 
+  static Future<T?> getMemo<T>(String key) =>
+      PhotosNativePlatform.instance.getMemo(key);
+
+  static Future<bool> setMemo<T>(String key, T value) =>
+      PhotosNativePlatform.instance.setMemo(key, value);
+
   static Future<bool> requestPermissions() =>
       PhotosNativePlatform.instance.requestPermissions();
 
@@ -45,11 +51,22 @@ class FlutterPhotoNative {
     Uint8List bytes,
     int width,
     int height, {
+    String? album,
+    String? mime,
+    int quality = 80,
+  }) =>
+      PhotosNativePlatform.instance.save(bytes, width, height,
+          mime: mime, quality: quality, album: album);
+
+  static Future<Uint8List> encode(
+    Uint8List bytes,
+    int width,
+    int height, {
     String? mime,
     int quality = 80,
   }) =>
       PhotosNativePlatform.instance
-          .save(bytes, width, height, mime: mime, quality: quality);
+          .encode(bytes, width, height, mime: mime, quality: quality);
 
   static Future<bool> share(
     Uint8List bytes,

@@ -33,6 +33,14 @@ abstract class PhotosNativePlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
+  Future<T?> getMemo<T>(String key) {
+    throw UnimplementedError('getMemo() has not been implemented.');
+  }
+
+  Future<bool> setMemo<T>(String key, T value) {
+    throw UnimplementedError('setMemo() has not been implemented.');
+  }
+
   Future<bool> requestPermissions() {
     throw UnimplementedError('requestPermissions() has not been implemented.');
   }
@@ -63,9 +71,20 @@ abstract class PhotosNativePlatform extends PlatformInterface {
     int width,
     int height, {
     required int quality,
+    String? album,
     String? mime,
   }) {
     throw UnimplementedError('save() has not been implemented.');
+  }
+
+  Future<Uint8List> encode(
+    Uint8List bytes,
+    int width,
+    int height, {
+    required int quality,
+    String? mime,
+  }) {
+    throw UnimplementedError('encode() has not been implemented.');
   }
 
   Future<bool> share(

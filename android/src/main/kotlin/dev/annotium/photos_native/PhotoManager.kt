@@ -8,12 +8,14 @@ import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import com.bumptech.glide.request.FutureTarget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.OutputStream
 import java.nio.ByteBuffer
@@ -163,6 +165,7 @@ class PhotoManager {
         width: Int,
         height: Int,
         mime: String,
+        album: String?,
         quality: Int,
         context: CoroutineContext = Dispatchers.IO):
             Result<Uri> = withContext(context)
@@ -184,13 +187,23 @@ class PhotoManager {
             put(MediaStore.MediaColumns.DATE_MODIFIED, timestamp)
             put(MediaStore.Images.Media.DATE_TAKEN, curTime)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                put(MediaStore.Images.Media.BUCKET_DISPLAY_NAME, Constants.ANNOTIUM)
-                put(MediaStore.Images.Media.RELATIVE_PATH, Constants.PICTURES_PATH)
+            val hasAlbum = !album.isNullOrEmpty()
+            var locationPath = Constants.PICTURES_PATH
+            if (hasAlbum) {
+                locationPath = Constants.PICTURES_PATH + "$album/";
+            }
+
+            if (SDK_INT >= Build.VERSION_CODES.Q) {
+                if (hasAlbum) {
+                    put(MediaStore.Images.Media.BUCKET_DISPLAY_NAME, album)
+                }
+//                put(MediaStore.Images.Media.RELATIVE_PATH, Constants.PICTURES_PATH)
+                put(MediaStore.Images.Media.RELATIVE_PATH, locationPath)
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
             else {
-                val dir = AnnotiumHelper.prepareExternalStorageFolder(Constants.PICTURES_PATH)
+//                val dir = PhotosNativeHelper.prepareExternalStorageFolder(Constants.PICTURES_PATH)
+                val dir = PhotosNativeHelper.prepareExternalStorageFolder(locationPath)
                 @Suppress("DEPRECATION")
                 put(MediaStore.Images.Media.DATA, File(dir, imageName).path)
             }
@@ -210,7 +223,7 @@ class PhotoManager {
                 toStream(outputStream, data, width, height, quality, mime)
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (SDK_INT >= Build.VERSION_CODES.Q) {
                 values.clear()
                 values.put(MediaStore.Images.Media.IS_PENDING, 0)
                 contentResolver.update(galleryFileUri, values, null, null)
@@ -222,6 +235,27 @@ class PhotoManager {
             return@withContext Result.failure(e)
         }
     }
+
+    suspend fun encode(
+        data: ByteArray,
+        width: Int,
+        height: Int,
+        mime: String,
+        quality: Int,
+        context: CoroutineContext = Dispatchers.IO):
+            Result<ByteArray> = withContext(context) {
+        try {
+            ByteArrayOutputStream().use { outputStream ->
+                toStream(outputStream, data, width, height, quality, mime)
+                val buffer = outputStream.toByteArray()
+
+                return@withContext Result.success(buffer)
+            }
+        } catch (e: Exception) {
+            return@withContext Result.failure(e)
+        }
+    }
+
 
     suspend fun saveDocument(
         appContext: Context,
@@ -286,7 +320,7 @@ class PhotoManager {
     ): Result<Uri> = withContext(context)
     {
         val contentResolver = appContext.contentResolver
-        val cachedPath = AnnotiumHelper.getExternalCachedPath(appContext)
+        val cachedPath = PhotosNativeHelper.getExternalCachedPath(appContext)
         val addedDate = System.currentTimeMillis() / 1_000
         val imageName = Constants.DEFAULT_NAME + addedDate + Constants.Extension.JPG
         val file = File(cachedPath, imageName)
@@ -357,7 +391,7 @@ class PhotoManager {
         return when {
             mime.equals(Constants.Mime.PNG, true) -> Bitmap.CompressFormat.PNG
             mime.equals(Constants.Mime.WEBP, true) -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (SDK_INT >= Build.VERSION_CODES.R) {
                     if (quality < Constants.HIGHEST_QUALITY) {
                         Bitmap.CompressFormat.WEBP_LOSSY
                     }

@@ -25,9 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) deleteImages:(NSDictionary* _Nonnull) arguments resultHandler:(ResultHandler*) resultHandler;
 - (void) save:(NSDictionary* _Nonnull) arguments resultHandler:(ResultHandler*) resultHandler;
 - (void) share:(NSDictionary* _Nonnull) arguments resultHandler:(ResultHandler*) resultHandler;
-- (void) getInitialImage:(ResultHandler*) resultHandler;
 - (void) isMediaStoreChanged:(ResultHandler*) resultHandler;
-- (void) setInitialImage:(NSString* _Nonnull)path;
 
 - (void) acquireTexture:(NSDictionary* _Nonnull) arguments resultHandler:(ResultHandler*) resultHandler;
 

@@ -7,9 +7,12 @@ class Functions {
   static const getPixels = "getPixels";
   static const deletePhotos = "delete";
   static const savePhoto = "save";
+  static const encode = "encode";
   static const sharePhoto = "share";
   static const getVersion = "getVersion";
   static const launchUrl = "launchUrl";
+  static const setMemo = "setMemo";
+  static const getMemo = "getMemo";
 
   // trial
   static const acquireTexture = "acquireTexture";
@@ -23,14 +26,17 @@ class Arguments {
   static const width = "width";
   static const height = "height";
   static const mime = "mime";
+  static const album = "album";
+
   static const quality = "quality";
   static const maxSize = "maxSize";
-  static const directory = "directory";
   static const uri = "uri";
   static const path = "path";
   static const name = "name";
   static const url = "url";
   static const title = "title";
+  static const key = "key";
+  static const value = "value";
 }
 
 class Keys {

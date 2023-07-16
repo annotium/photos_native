@@ -113,27 +113,13 @@ class MethodCallHandlerImpl
         }
     }
 
-//    private fun loadTarget(target: FutureTarget<Bitmap>, resultHandler: ResultHandler) {
-//        try {
-//            val bitmap = target.get()
-//            val data = ByteArray(bitmap.allocationByteCount)
-//            bitmap.copyPixelsToBuffer(ByteBuffer.wrap(data))
-//            val phDesc = PHImageDescriptor(bitmap.width, bitmap.height, data)
-//            resultHandler.success(phDesc.toMessageCodec())
-//        } catch (e: Exception) {
-//            Log.e(Constants.Errors.UNKNOWN, e.localizedMessage ?: "")
-//            resultHandler.error(Constants.Errors.UNKNOWN, e.localizedMessage, e.stackTrace)
-//        }
-//
-//        target.cancel(false)
-//    }
-
     fun save(
         context: Context,
         data: ByteArray,
         width: Int,
         height: Int,
         mime: String,
+        album: String?,
         quality: Int,
         resultHandler: ResultHandler,
     ) {
@@ -144,6 +130,7 @@ class MethodCallHandlerImpl
                     width,
                     height,
                     mime,
+                    album,
                     quality,
                     poolDispatcher
                 )
@@ -159,6 +146,37 @@ class MethodCallHandlerImpl
                     it.stackTrace
                 )
             }
+        }
+    }
+
+    fun encode(
+        data: ByteArray,
+        width: Int,
+        height: Int,
+        mime: String,
+        quality: Int,
+        resultHandler: ResultHandler,
+    ) {
+        mainScope.launch {
+            val result = PhotoManager.getInstance().encode(
+                data,
+                width,
+                height,
+                mime,
+                quality,
+                poolDispatcher
+            )
+
+            result.onSuccess {
+                resultHandler.success(it)
+            }
+                .onFailure {
+                    resultHandler.error(
+                        Constants.Errors.UNKNOWN,
+                        it.localizedMessage,
+                        it.stackTrace
+                    )
+                }
         }
     }
 
@@ -284,4 +302,19 @@ class MethodCallHandlerImpl
         }
         textureMap.clear()
     }
+
+//    private fun loadTarget(target: FutureTarget<Bitmap>, resultHandler: ResultHandler) {
+//        try {
+//            val bitmap = target.get()
+//            val data = ByteArray(bitmap.allocationByteCount)
+//            bitmap.copyPixelsToBuffer(ByteBuffer.wrap(data))
+//            val phDesc = PHImageDescriptor(bitmap.width, bitmap.height, data)
+//            resultHandler.success(phDesc.toMessageCodec())
+//        } catch (e: Exception) {
+//            Log.e(Constants.Errors.UNKNOWN, e.localizedMessage ?: "")
+//            resultHandler.error(Constants.Errors.UNKNOWN, e.localizedMessage, e.stackTrace)
+//        }
+//
+//        target.cancel(false)
+//    }
 }

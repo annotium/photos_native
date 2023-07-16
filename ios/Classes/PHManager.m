@@ -78,10 +78,6 @@
     [textureMap removeAllObjects];
 }
 
-- (void) setInitialImage:(NSString* _Nonnull)path
-{
-    _initialImage = path;
-}
 
 - (void) requestPermissions:(ResultHandler*) resultHandler
 {

@@ -52,13 +52,14 @@ class MockPhotosNativePlatform
   }
 
   @override
-  Future<bool> save(Uint8List bytes, int width, int height,
-      {String? mime,
-      int quality = 80,
-      double? devicePixelRatio = 1.0,
-      String? directory,
-      String? path,
-      bool overwrite = false}) {
+  Future<bool> save(
+    Uint8List bytes,
+    int width,
+    int height, {
+    String? mime,
+    String? album,
+    int quality = 80,
+  }) {
     throw UnimplementedError();
   }
 
@@ -75,6 +76,22 @@ class MockPhotosNativePlatform
 
   @override
   Future<void> releaseTexture(String id) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Uint8List> encode(Uint8List bytes, int width, int height,
+      {required int quality, String? mime}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<T?> getMemo<T>(String key) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setMemo<T>(String key, T value) {
     throw UnimplementedError();
   }
 }

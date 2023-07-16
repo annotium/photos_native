@@ -29,6 +29,30 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     return version;
   }
 
+  /// Temporarily key-value memo getter usage to share between platform and Flutter
+  ///
+  /// [String] key to get memo value
+  @override
+  Future<T?> getMemo<T>(String key) async {
+    return await methodChannel.invokeMethod<T>(Functions.getMemo, {
+      Arguments.key: key,
+    });
+  }
+
+  /// Temporarily key-value memo setter usage to share between platform and Flutter
+  /// If value is null, then it will clear memo key
+  ///
+  /// [String] key
+  /// [String] value
+  @override
+  Future<bool> setMemo<T>(String key, T? value) async {
+    return await methodChannel.invokeMethod<bool>(Functions.setMemo, {
+          Arguments.key: key,
+          Arguments.value: value,
+        }) ??
+        false;
+  }
+
   /// Ensure to requests photo library permission before access
   ///
   /// return true if permission is granted, otherwise false
@@ -155,9 +179,6 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   /// [mime] MIME type of the save image
   /// [quality] quality of the save image, maximum is 100, size of saved image
   /// will be directly proportional to the quality
-  /// [directory] directory to save
-  /// [path] path to save (only one of [directory]/[path] is used)
-  /// [overwrite] overwrite the existing photo
   ///
   /// return true if successful otherwise false
   @override
@@ -166,9 +187,37 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     int width,
     int height, {
     required int quality,
+    String? album,
     String? mime,
   }) =>
       _invokeMethod<bool>(method: Functions.savePhoto, arguments: {
+        Arguments.data: bytes,
+        Arguments.width: width,
+        Arguments.height: height,
+        Arguments.album: album,
+        Arguments.mime: mime,
+        Arguments.quality: quality,
+      });
+
+  /// Encode(or compress) image data to given format/inputs
+  ///
+  /// [bytes] image data to save
+  /// [width] width of save image
+  /// [height] height of save image
+  /// [mime] MIME type of the save image
+  /// [quality] quality of the save image, maximum is 100, size of saved image
+  /// will be directly proportional to the quality
+  ///
+  /// return byte array of encoded image if successful otherwise exception will be thrown
+  @override
+  Future<Uint8List> encode(
+    Uint8List bytes,
+    int width,
+    int height, {
+    required int quality,
+    String? mime,
+  }) =>
+      _invokeMethod<Uint8List>(method: Functions.encode, arguments: {
         Arguments.data: bytes,
         Arguments.width: width,
         Arguments.height: height,

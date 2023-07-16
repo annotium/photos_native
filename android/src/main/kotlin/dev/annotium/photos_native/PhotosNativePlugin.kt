@@ -30,7 +30,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
   private var deleteHandler: DeleteResultListenerHandle? = null
 
   private var _mediaStoreChanged = false
-  private var _sharedUri: String? = null
+  private val _memoMap = mutableMapOf<String, Any>();
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPluginBinding) {
     pluginBinding = flutterPluginBinding
@@ -125,13 +125,13 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
     if (intent.type?.startsWith("image/") == true) {
       when (intent.action) {
         Intent.ACTION_SEND -> {
-          val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
-          _sharedUri = uri?.toString()
+          val uri = intent.parcelable<Uri>(Intent.EXTRA_STREAM)
+          setMemo(Constants.Keys.SHARED_URI, uri?.toString())
         }
 
         Intent.ACTION_VIEW, Intent.ACTION_EDIT -> {
           val uri = intent.data
-          _sharedUri = uri?.toString()
+          setMemo(Constants.Keys.SHARED_URI, uri?.toString())
         }
       }
     }
@@ -176,9 +176,9 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         val maxSize = call.argument<Int>(Constants.Arguments.MAXSIZE) ?: Constants.MAXSIZE
 
         if (id.isNullOrEmpty()) {
-          val uri = call.argument<String>(Constants.Arguments.URI) ?: _sharedUri
+          val uri = call.argument<String>(Constants.Arguments.URI)
           if (uri.isNullOrEmpty()) {
-            resultHandler.error(Constants.Errors.INVALID, "Invalid image")
+            resultHandler.error(Constants.Errors.INVALID, "invalid_id_or_uri")
           }
           else {
             val handleUri = Uri.parse(uri)
@@ -188,7 +188,6 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
               maxSize,
               resultHandler
             )
-            _sharedUri = null
           }
         }
         else {
@@ -210,11 +209,29 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
           )
         }
       }
+      Constants.Functions.ENCODE -> {
+        val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
+        val width = call.argument<Int>(Constants.Arguments.WIDTH)!!
+        val height = call.argument<Int>(Constants.Arguments.HEIGHT)!!
+        val mime = call.argument<String>(Constants.Arguments.MIME)!!
+        val quality = call.argument<Int>(Constants.Arguments.QUALITY)
+          ?: Constants.DEFAULT_QUALITY
+
+        methodCallHandler?.encode(
+          data,
+          width,
+          height,
+          mime,
+          quality,
+          resultHandler,
+        )
+      }
       Constants.Functions.SAVE -> {
         val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
         val width = call.argument<Int>(Constants.Arguments.WIDTH)!!
         val height = call.argument<Int>(Constants.Arguments.HEIGHT)!!
         val mime = call.argument<String>(Constants.Arguments.MIME)!!
+        val album = call.argument<String>(Constants.Arguments.ALBUM)
         val quality = call.argument<Int>(Constants.Arguments.QUALITY)
           ?: Constants.DEFAULT_QUALITY
 
@@ -224,6 +241,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
           width,
           height,
           mime,
+          album,
           quality,
           resultHandler,
         )
@@ -245,14 +263,20 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         urlLauncher.launch(activity, url, null)
         result.success(true)
       }
-      Constants.Functions.GET_INITIAL_PATH -> {
-        result.success(_sharedUri)
-      }
       Constants.Functions.IS_MEDIA_STORE_CHANGED -> {
         result.success(_mediaStoreChanged)
       }
       Constants.Functions.GET_VERSION -> {
         getVersion(result)
+      }
+      Constants.Functions.GET_MEMO -> {
+        val key = call.argument<String>(Constants.Arguments.KEY)
+        result.success(getMemo(key))
+      }
+      Constants.Functions.SET_MEMO -> {
+        val key = call.argument<String>(Constants.Arguments.KEY)
+        val value = call.argument<String>(Constants.Arguments.VALUE)
+        result.success(setMemo(key, value))
       }
       Constants.Functions.ACQUIRE_TEXTURE -> {
         val id = call.argument<String>(Constants.Arguments.ID)
@@ -298,7 +322,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
     }
 
     applicationContext?.let { context ->
-      val info = context.packageManager.getPackageInfo(
+      val info = context.packageManager.getPackageInfoCompat(
         context.packageName,
         PackageManager.GET_ACTIVITIES
       )
@@ -318,6 +342,32 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         )
       )
     }
+  }
+
+  private fun setMemo(key: String?, value: Any?): Boolean {
+    Log.d(Constants.TAG, "Set value '$value' for key '$key'")
+
+    if (key.isNullOrEmpty()) {
+      return false
+    }
+
+    if (value == null) {
+      _memoMap.remove(key)
+    } else {
+      _memoMap[key] = value
+    }
+
+    return true
+  }
+
+  private fun getMemo(key: String?): Any? {
+    Log.d(Constants.TAG, "Get value for key '$key'")
+
+    if (key.isNullOrEmpty()) {
+      return null
+    }
+
+    return _memoMap.remove(key)
   }
 
   private inner class OnNewIntentListenerHandle: NewIntentListener {

@@ -11,22 +11,6 @@ data class PHGallery(val albums: MutableList<PHAlbum> = mutableListOf())
     }
 }
 
-//data class PHGallery(private val allPhotosTitle: String)
-//{
-//    private val allIds = mutableSetOf<String>()
-//    val allPhotosAlbum = PHAlbum(Constants.Album.AllPhotos, allPhotosTitle, allIds.toList())
-//
-//    fun addPhoto(album: String, id: String) {
-//
-//    }
-//
-//    fun toMessageCodec(): List<Any> {
-//        return albums.map {
-//            it.toMessageCodec()
-//        }
-//    }
-//}
-
 data class PHAlbum(val id: String,
               var title: String = "",
               val items: MutableList<String> = mutableListOf())
