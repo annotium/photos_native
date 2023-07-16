@@ -178,7 +178,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         if (id.isNullOrEmpty()) {
           val uri = call.argument<String>(Constants.Arguments.URI)
           if (uri.isNullOrEmpty()) {
-            resultHandler.error(Constants.Errors.INVALID, "Invalid image")
+            resultHandler.error(Constants.Errors.INVALID, "invalid_id_or_uri")
           }
           else {
             val handleUri = Uri.parse(uri)
