@@ -246,6 +246,26 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
           resultHandler,
         )
       }
+      Constants.Functions.SAVE_FILE -> {
+        val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
+        val width = call.argument<Int>(Constants.Arguments.WIDTH)!!
+        val height = call.argument<Int>(Constants.Arguments.HEIGHT)!!
+        val mime = call.argument<String>(Constants.Arguments.MIME)!!
+        val quality = call.argument<Int>(Constants.Arguments.QUALITY)
+          ?: Constants.DEFAULT_QUALITY
+        val path = call.argument<String>(Constants.Arguments.PATH)!!
+
+        methodCallHandler?.saveFile(
+          activity,
+          data,
+          width,
+          height,
+          mime,
+          quality,
+          path,
+          resultHandler,
+        )
+      }
       Constants.Functions.SHARE -> {
         val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
         val width = call.argument<Int>(Constants.Arguments.WIDTH)!!

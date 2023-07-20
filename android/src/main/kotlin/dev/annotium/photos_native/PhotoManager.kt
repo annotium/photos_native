@@ -197,12 +197,10 @@ class PhotoManager {
                 if (hasAlbum) {
                     put(MediaStore.Images.Media.BUCKET_DISPLAY_NAME, album)
                 }
-//                put(MediaStore.Images.Media.RELATIVE_PATH, Constants.PICTURES_PATH)
                 put(MediaStore.Images.Media.RELATIVE_PATH, locationPath)
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
             else {
-//                val dir = PhotosNativeHelper.prepareExternalStorageFolder(Constants.PICTURES_PATH)
                 val dir = PhotosNativeHelper.prepareExternalStorageFolder(locationPath)
                 @Suppress("DEPRECATION")
                 put(MediaStore.Images.Media.DATA, File(dir, imageName).path)
@@ -257,16 +255,14 @@ class PhotoManager {
     }
 
 
-    suspend fun saveDocument(
+    suspend fun saveFile(
         appContext: Context,
         data: ByteArray,
         width: Int,
         height: Int,
         mime: String,
         quality: Int,
-        directory: String?,
-        path: String?,
-        overwrite: Boolean = false,
+        path: String,
         context: CoroutineContext = Dispatchers.IO):
             Result<Uri> = withContext(context)
     {
@@ -275,24 +271,11 @@ class PhotoManager {
         val contentResolver = appContext.contentResolver
 
         try {
-            val timestamp = System.currentTimeMillis() / 1000
-            val imageName = if (overwrite && !path.isNullOrEmpty()) {
-                val fileUri = Uri.parse(path)
-                val curFile = File(fileUri.path.toString())
-
-                if (curFile.exists()) {
-                    curFile.delete()
-                }
-
-                resolveName(curFile.nameWithoutExtension, timestamp)
-            } else {
-                "${Constants.DEFAULT_NAME}-$timestamp"
+            val file = File(path)
+            if (file.exists()) {
+                file.delete()
             }
 
-            val ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime)
-            val fileName = "$imageName.$ext"
-
-            val file = File(directory!!).resolve(fileName)
             val uri = Uri.fromFile(file)
 
             contentResolver.openOutputStream(uri).use { outputStream ->

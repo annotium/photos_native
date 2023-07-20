@@ -77,6 +77,17 @@ abstract class PhotosNativePlatform extends PlatformInterface {
     throw UnimplementedError('save() has not been implemented.');
   }
 
+  Future<bool> saveFile(
+    Uint8List bytes,
+    int width,
+    int height, {
+    required int quality,
+    String? mime,
+    required String path,
+  }) {
+    throw UnimplementedError('saveFile() has not been implemented.');
+  }
+
   Future<Uint8List> encode(
     Uint8List bytes,
     int width,
