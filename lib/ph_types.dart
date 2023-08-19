@@ -1,6 +1,7 @@
 // Copyright Annotium 2023
 
 import "dart:typed_data";
+import "dart:ui";
 
 import "package:photos_native/constants.dart";
 import "package:equatable/equatable.dart";
@@ -59,6 +60,8 @@ class PHImageDescriptor {
 
   /// Image data in bytes
   final Uint8List data;
+
+  Size get dimension => Size(width.toDouble(), height.toDouble());
 
   PHImageDescriptor({
     required this.width,

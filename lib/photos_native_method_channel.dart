@@ -199,6 +199,34 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
         Arguments.quality: quality,
       });
 
+  /// Save image to file
+  ///
+  /// [bytes] image data to save
+  /// [width] width of save image
+  /// [height] height of save image
+  /// [mime] MIME type of the save image
+  /// [quality] quality of the save image, maximum is 100, size of saved image
+  /// will be directly proportional to the quality
+  ///
+  /// return true if successful otherwise false
+  @override
+  Future<bool> saveFile(
+    Uint8List bytes,
+    int width,
+    int height, {
+    required int quality,
+    String? mime,
+    required String path,
+  }) =>
+      _invokeMethod<bool>(method: Functions.saveFile, arguments: {
+        Arguments.data: bytes,
+        Arguments.width: width,
+        Arguments.height: height,
+        Arguments.path: path,
+        Arguments.mime: mime,
+        Arguments.quality: quality,
+      });
+
   /// Encode(or compress) image data to given format/inputs
   ///
   /// [bytes] image data to save

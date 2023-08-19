@@ -149,6 +149,42 @@ class MethodCallHandlerImpl
         }
     }
 
+    fun saveFile(
+        context: Context,
+        data: ByteArray,
+        width: Int,
+        height: Int,
+        mime: String,
+        quality: Int,
+        path: String,
+        resultHandler: ResultHandler,
+    ) {
+        mainScope.launch {
+            val saveResult = PhotoManager.getInstance().saveFile(
+                context,
+                data,
+                width,
+                height,
+                mime,
+                quality,
+                path,
+                poolDispatcher
+            )
+
+
+            saveResult.onSuccess {
+                resultHandler.success(true)
+            }
+                .onFailure {
+                    resultHandler.error(
+                        Constants.Errors.UNKNOWN,
+                        it.localizedMessage,
+                        it.stackTrace
+                    )
+                }
+        }
+    }
+
     fun encode(
         data: ByteArray,
         width: Int,
