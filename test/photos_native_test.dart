@@ -94,6 +94,12 @@ class MockPhotosNativePlatform
   Future<bool> setMemo<T>(String key, T value) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool> saveFile(Uint8List bytes, int width, int height,
+      {required int quality, String? mime, required String path}) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {
