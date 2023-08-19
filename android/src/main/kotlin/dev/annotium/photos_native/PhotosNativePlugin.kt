@@ -15,6 +15,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.PluginRegistry.NewIntentListener
+import java.net.URLDecoder
 
 /** PhotosNativePlugin */
 class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandler {
@@ -163,7 +164,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
           methodCallHandler?.getThumbnail(activity, uri, width, height, resultHandler)
         }
         else if (!uriStr.isNullOrEmpty()) {
-          val uri = Uri.parse(uriStr)
+          val uri = Uri.parse(URLDecoder.decode(uriStr, "UTF-8"))
           methodCallHandler?.getThumbnail(activity, uri, width, height, resultHandler)
         }
 
@@ -176,12 +177,14 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         val maxSize = call.argument<Int>(Constants.Arguments.MAXSIZE) ?: Constants.MAXSIZE
 
         if (id.isNullOrEmpty()) {
-          val uri = call.argument<String>(Constants.Arguments.URI)
-          if (uri.isNullOrEmpty()) {
+          val uriStr = call.argument<String>(Constants.Arguments.URI)
+
+          if (uriStr.isNullOrEmpty()) {
             resultHandler.error(Constants.Errors.INVALID, "invalid_id_or_uri")
           }
           else {
-            val handleUri = Uri.parse(uri)
+            val decodedUri = URLDecoder.decode(uriStr, "UTF-8")
+            val handleUri = Uri.parse(decodedUri)
             methodCallHandler?.getPixelsFromUri(
               activity,
               handleUri,
@@ -191,7 +194,8 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
           }
         }
         else {
-          methodCallHandler?.getPixels(activity, id, maxSize, resultHandler)
+          val decodedUri = URLDecoder.decode(id, "UTF-8")
+          methodCallHandler?.getPixels(activity, decodedUri, maxSize, resultHandler)
         }
       }
       Constants.Functions.DELETE -> {
