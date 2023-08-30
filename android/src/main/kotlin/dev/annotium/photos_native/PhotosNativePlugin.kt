@@ -127,6 +127,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
       when (intent.action) {
         Intent.ACTION_SEND -> {
           val uri = intent.parcelable<Uri>(Intent.EXTRA_STREAM)
+          Log.d("TAG", "Shared $uri")
           setMemo(Constants.Keys.SHARED_URI, uri?.toString())
         }
 
