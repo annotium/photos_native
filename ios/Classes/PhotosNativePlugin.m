@@ -23,7 +23,7 @@
 - (instancetype) initWithRegistrar:(NSObject<FlutterPluginRegistrar>* _Nonnull)registrar {
     self = [super init];
     if (self) {
-        memoMap = [NSMutableDictionary init];
+        memoMap = [NSMutableDictionary new];
         photoManager = [PHManager initWithRegistrar: registrar];
     }
     
