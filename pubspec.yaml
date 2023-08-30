@@ -1,6 +1,6 @@
 name: photos_native
 description: High performance Flutter plugin for photos library. It can load photo albums, load image/thumnail, save, share...
-version: 0.0.3
+version: 0.0.4
 homepage: https://annotium.github.io
 
 environment:
