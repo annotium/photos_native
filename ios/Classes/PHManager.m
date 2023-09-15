@@ -109,11 +109,14 @@
 
 - (void) getBytes:(NSDictionary* _Nonnull) arguments resultHandler:(ResultHandler*) resultHandler
 {
-    NSString* identifier = arguments[ARG_ID];
-    int maxWidth = [arguments[ARG_MAXSIZE] intValue];
+    NSString* assetId = arguments[ARG_ID];
+    if (assetId == nil) {
+        [resultHandler replyError:@"invalid_id"];
+        return;
+    }
 
     [operationQueue addOperationWithBlock: ^{
-        [self getBytes:identifier maxWidth:maxWidth resultHandler:resultHandler];
+        [self getAssetBytesWithId:assetId resultHandler:resultHandler];
     }];
 }
 
@@ -325,9 +328,9 @@
     }];
 }
 
-- (void) getBytes:(NSString* _Nonnull) identifier maxWidth:(int) maxWidth resultHandler:(ResultHandler*) resultHandler
+- (void) getAssetBytesWithId:(NSString* _Nonnull) assetId resultHandler:(ResultHandler*) resultHandler
 {
-    PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[identifier] options:nil];
+    PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[assetId] options:nil];
     if (fetchResult.count == 0) {
         [resultHandler replyError:ERR_NOT_FOUND];
         return;
@@ -335,13 +338,10 @@
 
     PHAsset* asset = (PHAsset*)fetchResult.firstObject;
     PHImageRequestOptions* options = [QueryOptions getImageRequestOptions];
-    CGSize size = [PHManager getAssetSize: asset maxSize: maxWidth];
 
-    [[PHImageManager defaultManager] requestImageForAsset:asset targetSize:size contentMode:PHImageContentModeAspectFill options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+    [[PHImageManager defaultManager] requestImageDataForAsset:asset options:options resultHandler:^(NSData * _Nullable result, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
         if (result != nil) {
-            if (![info objectForKey:PHImageResultIsDegradedKey] || ![info[PHImageResultIsDegradedKey] boolValue]) {
-                [resultHandler reply: [FlutterStandardTypedData typedDataWithBytes:UIImagePNGRepresentation(result)]];
-            }
+            [resultHandler reply: [FlutterStandardTypedData typedDataWithBytes:result]];
         }
     }];
 }
