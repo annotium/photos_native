@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import io.flutter.view.TextureRegistry
 import kotlinx.coroutines.*
+import java.io.IOException
 import java.util.concurrent.Executors
 
 class MethodCallHandlerImpl
@@ -49,6 +50,12 @@ class MethodCallHandlerImpl
         }
     }
 
+    fun getBytes(context: Context, id: String, resultHandler: ResultHandler)
+    {
+        val uri = ContentHelper.getUriWithId(id.toLong())
+        getBytesFromUri(context, uri, resultHandler)
+    }
+
     fun getPixels(context: Context, id: String, maxSize: Int, resultHandler: ResultHandler)
     {
         val uri = ContentHelper.getUriWithId(id.toLong())
@@ -86,12 +93,37 @@ class MethodCallHandlerImpl
         }
     }
 
+    fun getBytesFromUri(context: Context, uri: Uri, resultHandler: ResultHandler) {
+
+        mainScope.launch {
+            try {
+                val bytes = PhotoManager.getInstance().readBytes(context, uri)
+                if (bytes == null) {
+                    resultHandler.error(
+                        Constants.Errors.UNKNOWN
+                    )
+                } else {
+                    resultHandler.success(bytes)
+                }
+
+            } catch (e: Exception) {
+                resultHandler.error(
+                    Constants.Errors.UNKNOWN,
+                    e.localizedMessage,
+                    e.stackTrace
+                )
+            }
+
+        }
+    }
+
     fun getPixelsFromUri(context: Context, uri: Uri, maxSize: Int, resultHandler: ResultHandler)
     {
         val request = Glide.with(context)
             .asBitmap()
             .load(uri)
             .centerInside()
+            .format(DecodeFormat.PREFER_ARGB_8888)
             .override(maxSize)
 
         mainScope.launch {

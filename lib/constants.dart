@@ -5,6 +5,7 @@ class Functions {
   static const queryAlbums = "queryAlbums";
   static const getThumbnail = "getThumbnail";
   static const getPixels = "getPixels";
+  static const getBytes = "getBytes";
   static const deletePhotos = "delete";
   static const savePhoto = "save";
   static const saveFile = "saveFile";

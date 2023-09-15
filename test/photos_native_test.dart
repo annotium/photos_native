@@ -100,6 +100,11 @@ class MockPhotosNativePlatform
       {required int quality, String? mime, required String path}) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<Uint8List> getBytes(String? id, {String? uri}) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

@@ -44,6 +44,12 @@ class FlutterPhotoNative {
   }) =>
       PhotosNativePlatform.instance.getPixels(id, uri: uri, maxSize: maxSize);
 
+  static Future<Uint8List> getBytes(
+    String? id, {
+    String? uri,
+  }) =>
+      PhotosNativePlatform.instance.getBytes(id, uri: uri);
+
   static Future<int> delete(List<String> ids) =>
       PhotosNativePlatform.instance.delete(ids);
 

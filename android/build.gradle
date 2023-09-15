@@ -3,7 +3,7 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     ext.kotlin_version = '1.7.10'
-    ext.glide_version = '4.14.2'
+    ext.glide_version = '4.16.0'
     ext.kotlin_coroutines_version = '1.6.4'
 
     repositories {

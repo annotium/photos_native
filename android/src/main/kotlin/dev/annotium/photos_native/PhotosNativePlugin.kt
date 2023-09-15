@@ -173,6 +173,30 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
           resultHandler.error(Constants.Errors.INVALID, "Invalid image")
         }
       }
+      Constants.Functions.GET_BYTES -> {
+        val id = call.argument<String>(Constants.Arguments.ID)
+
+        if (id.isNullOrEmpty()) {
+          val uriStr = call.argument<String>(Constants.Arguments.URI)
+
+          if (uriStr.isNullOrEmpty()) {
+            resultHandler.error(Constants.Errors.INVALID, "invalid_id_or_uri")
+          }
+          else {
+            val decodedUri = URLDecoder.decode(uriStr, "UTF-8")
+            val handleUri = Uri.parse(decodedUri)
+            methodCallHandler?.getBytesFromUri(
+              activity,
+              handleUri,
+              resultHandler
+            )
+          }
+        }
+        else {
+          val decodedUri = URLDecoder.decode(id, "UTF-8")
+          methodCallHandler?.getBytes(activity, decodedUri, resultHandler)
+        }
+      }
       Constants.Functions.GET_PIXELS -> {
         val id = call.argument<String>(Constants.Arguments.ID)
         val maxSize = call.argument<Int>(Constants.Arguments.MAXSIZE) ?: Constants.MAXSIZE
