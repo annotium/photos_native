@@ -5,6 +5,7 @@ package dev.annotium.photos_native
 object Constants {
     object Functions {
         const val QUERY_ALBUMS = "queryAlbums"
+        const val GET_BYTES = "getBytes"
         const val GET_PIXELS = "getPixels"
         const val GET_THUMBNAIL = "getThumbnail"
         const val DELETE = "delete"

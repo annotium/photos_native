@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 import java.io.OutputStream
 import java.nio.ByteBuffer
 import kotlin.coroutines.CoroutineContext
@@ -45,6 +46,24 @@ class PhotoManager {
 
         return@withContext result
     }
+
+//    suspend fun loadImageBytes(uri: Uri,context: CoroutineContext = Dispatchers.Default):
+//            Result<ByteArray?> = withContext(context)
+//    {
+//        val result = try {
+//            val bytes = readBytes(context, uri)
+//            if (bytes == null) {
+//
+//            }
+//
+//            Result.success(bytes)
+//        } catch (e: Exception) {
+//            Log.e(Constants.TAG,e.localizedMessage ?: "")
+//            Result.failure(e)
+//        }
+//
+//        return@withContext result
+//    }
 
     suspend fun loadImageData(target: FutureTarget<Bitmap>,context: CoroutineContext = Dispatchers.Default):
             Result<PHImageDescriptor> = withContext(context)
@@ -405,6 +424,10 @@ class PhotoManager {
 
         return newParts.joinToString("-")
     }
+
+    @Throws(IOException::class)
+    inline fun readBytes(context: Context, uri: Uri): ByteArray? =
+        context.contentResolver.openInputStream(uri)?.use { it.buffered().readBytes() }
 
 //    @ExperimentalCoroutinesApi
 //    private suspend fun scanFilePath(

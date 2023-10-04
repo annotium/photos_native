@@ -62,6 +62,13 @@ abstract class PhotosNativePlatform extends PlatformInterface {
     throw UnimplementedError('getPixels() has not been implemented.');
   }
 
+  Future<Uint8List> getBytes(
+    String? id, {
+    String? uri,
+  }) {
+    throw UnimplementedError('getBytes() has not been implemented.');
+  }
+
   Future<int> delete(List<String> ids) {
     throw UnimplementedError('delete() has not been implemented.');
   }

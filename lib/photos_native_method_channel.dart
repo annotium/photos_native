@@ -153,6 +153,23 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
     );
   }
 
+  /// Get photo bytes of the photo
+  ///
+  /// [Uint8List] image bytes
+  @override
+  Future<Uint8List> getBytes(
+    String? id, {
+    String? uri,
+  }) {
+    assert(
+        (id?.isNotEmpty ?? false) || uri != null, "Id or uri must be provided");
+
+    return _invokeMethod<Uint8List>(method: Functions.getBytes, arguments: {
+      Arguments.id: id,
+      Arguments.uri: uri,
+    });
+  }
+
   /// Delete photos
   ///
   /// [ids] IDs request of the deleting photos

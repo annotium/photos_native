@@ -9,5 +9,7 @@
 * Bug fix and add utility functions  
 
 ## 0.0.4
-* Bug fix 
+* Bug fix
 
+## 0.0.5
+* Support to read image original bytes
