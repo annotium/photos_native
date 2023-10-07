@@ -13,7 +13,7 @@ dependencies:
   plugin_platform_interface: ^2.0.2
   crypto: ^3.0.3
   equatable: ^2.0.5
-  permission_handler: ^10.2.0
+  permission_handler: ^11.0.1
 
 dev_dependencies:
   flutter_test:
