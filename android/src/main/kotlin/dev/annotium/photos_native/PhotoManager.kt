@@ -426,7 +426,7 @@ class PhotoManager {
     }
 
     @Throws(IOException::class)
-    inline fun readBytes(context: Context, uri: Uri): ByteArray? =
+    fun readBytes(context: Context, uri: Uri): ByteArray? =
         context.contentResolver.openInputStream(uri)?.use { it.buffered().readBytes() }
 
 //    @ExperimentalCoroutinesApi
