@@ -13,3 +13,6 @@
 
 ## 0.0.5
 * Support to read image original bytes
+
+## 0.0.7
+* iOS: Fix read byte data from URL
