@@ -110,14 +110,21 @@
 - (void) getBytes:(NSDictionary* _Nonnull) arguments resultHandler:(ResultHandler*) resultHandler
 {
     NSString* assetId = arguments[ARG_ID];
-    if (assetId == nil) {
-        [resultHandler replyError:@"invalid_id"];
-        return;
+    if (assetId == nil || assetId.length == 0) {
+        NSString* url = arguments[ARG_URI];
+        if (url == nil || url.length == 0) {
+            [resultHandler replyError:@"invalid_id"];
+            return;
+        } else {
+            [operationQueue addOperationWithBlock: ^{
+                [self getPixelsDataFromUrl:url resultHandler:resultHandler];
+            }];
+        }
+    } else {
+        [operationQueue addOperationWithBlock: ^{
+            [self getAssetDataWithId:assetId resultHandler:resultHandler];
+        }];
     }
-
-    [operationQueue addOperationWithBlock: ^{
-        [self getAssetBytesWithId:assetId resultHandler:resultHandler];
-    }];
 }
 
 - (void) getPixels:(NSDictionary* _Nonnull) arguments resultHandler:(ResultHandler*) resultHandler
@@ -328,7 +335,7 @@
     }];
 }
 
-- (void) getAssetBytesWithId:(NSString* _Nonnull) assetId resultHandler:(ResultHandler*) resultHandler
+- (void) getAssetDataWithId:(NSString* _Nonnull) assetId resultHandler:(ResultHandler*) resultHandler
 {
     PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[assetId] options:nil];
     if (fetchResult.count == 0) {
@@ -344,6 +351,23 @@
             [resultHandler reply: [FlutterStandardTypedData typedDataWithBytes:result]];
         }
     }];
+}
+
+- (void) getPixelsDataFromUrl:(NSString* _Nonnull) path resultHandler:(ResultHandler*) resultHandler
+{
+    if (path == nil) {
+        [resultHandler replyError:ERR_UNKNOWN];
+        return;
+    }
+    
+    NSData* data = [[NSFileManager defaultManager] contentsAtPath:path];
+    _initialImage = @"";
+
+    if (data == nil) {
+        [resultHandler replyError:ERR_UNKNOWN];
+    } else {
+        [resultHandler reply: [FlutterStandardTypedData typedDataWithBytes:data]];
+    }
 }
 
 - (void) getPixelsFromUrl:(NSString* _Nonnull) path maxWidth:(int) maxWidth resultHandler:(ResultHandler*) resultHandler
