@@ -385,7 +385,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
 
       result.success(
         mapOf<String, Any>(
-          Constants.APP_VERSION to info.versionName,
+          Constants.APP_VERSION to (info.versionName ?: ""),
           Constants.BUILD_NUMBER to versionCode,
           Constants.SDK_INT to Build.VERSION.SDK_INT
         )
