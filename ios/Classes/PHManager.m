@@ -61,7 +61,6 @@
         cachingManager = [PHCachingImageManager new];
         operationQueue = [NSOperationQueue new];
         operationQueue.maxConcurrentOperationCount = [[NSProcessInfo processInfo] processorCount];
-        [self startObserve];
     }
 
     return self;

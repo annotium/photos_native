@@ -426,8 +426,13 @@ class PhotoManager {
     }
 
     @Throws(IOException::class)
-    fun readBytes(context: Context, uri: Uri): ByteArray? =
-        context.contentResolver.openInputStream(uri)?.use { it.buffered().readBytes() }
+    fun readBytes(context: Context, uri: Uri): ByteArray? {
+        if (uri.scheme == null || uri.scheme == "file") {
+            val path = uri.path ?: uri.toString()
+            return File(path).takeIf { it.exists() }?.readBytes()
+        }
+        return context.contentResolver.openInputStream(uri)?.use { it.buffered().readBytes() }
+    }
 
 //    @ExperimentalCoroutinesApi
 //    private suspend fun scanFilePath(
