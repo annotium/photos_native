@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import io.flutter.plugin.common.PluginRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -34,6 +35,9 @@ open class DeleteResultListenerHandle(
 	protected var resultHandler: ResultHandler? = null
 	protected var deleteRequestCode: Int = 28_000
 
+	private val job = SupervisorJob()
+	private val scope = CoroutineScope(Dispatchers.IO + job)
+
 	override fun onActivityResult(
 		requestCode: Int,
 		resultCode: Int, data: Intent?
@@ -41,7 +45,7 @@ open class DeleteResultListenerHandle(
 
 	open fun delete(ids: List<String>, resultHandler: ResultHandler)
 	{
-		CoroutineScope(Dispatchers.IO).launch {
+		scope.launch {
 			val result = PhotoManager.getInstance().delete(activity, ids)
 			result
 				.onSuccess { count ->
@@ -55,6 +59,10 @@ open class DeleteResultListenerHandle(
 					)
 				}
 		}
+	}
+
+	open fun cancel() {
+		job.cancel()
 	}
 }
 

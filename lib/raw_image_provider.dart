@@ -48,12 +48,7 @@ class RawImageProvider extends ImageProvider<RawImageKey> {
       );
 
   @override
-  // ignore: override_on_non_overriding_member
   ImageStreamCompleter loadImage(RawImageKey key, decode) =>
-      _getStreamCompleter(key);
-
-  @override
-  ImageStreamCompleter load(RawImageKey key, decode) =>
       _getStreamCompleter(key);
 
   @override
@@ -72,11 +67,6 @@ class RawImageProvider extends ImageProvider<RawImageKey> {
       height: image.height,
       pixelFormat: image.pixelFormat,
     );
-    // assert(() {
-    //   debugPrint("ImageDescriptor: ${descriptor.width}x${descriptor.height}");
-    //   return true;
-    // }());
-
     return descriptor.instantiateCodec(
       targetWidth: targetWidth,
       targetHeight: targetHeight,

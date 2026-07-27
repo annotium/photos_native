@@ -372,15 +372,22 @@ class MethodChannelPhotosNative extends PhotosNativePlatform {
   /// iOS, it required `photos` permission, on Android before 13 it will require
   /// `storage` permission
   Future<Permission> _getPermissionsGroup() async {
-    if (Platform.isAndroid) {
-      final sdkInt = version.sdkInt;
-      final isTiramisu = Platform.isAndroid && sdkInt != null && sdkInt >= 33;
-
-      return isTiramisu ? Permission.photos : Permission.storage;
-    }
-
-    return Permission.photos;
+    return resolvePermissionGroup(Platform.isAndroid, version.sdkInt);
   }
+}
+
+/// Pure permission-group selection logic, extracted so it can be unit
+/// tested without mocking [Platform.isAndroid].
+///
+/// On Android 13 (API 33, Tiramisu) and above, and on iOS, `photos` is used.
+/// On Android below API 33, `storage` is used.
+Permission resolvePermissionGroup(bool isAndroid, int? sdkInt) {
+  if (isAndroid) {
+    final isTiramisu = sdkInt != null && sdkInt >= 33;
+    return isTiramisu ? Permission.photos : Permission.storage;
+  }
+
+  return Permission.photos;
 }
 
 typedef _ValuePostProcess<T> = T Function(dynamic value);

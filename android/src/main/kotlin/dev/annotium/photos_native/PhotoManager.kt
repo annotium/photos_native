@@ -47,24 +47,6 @@ class PhotoManager {
         return@withContext result
     }
 
-//    suspend fun loadImageBytes(uri: Uri,context: CoroutineContext = Dispatchers.Default):
-//            Result<ByteArray?> = withContext(context)
-//    {
-//        val result = try {
-//            val bytes = readBytes(context, uri)
-//            if (bytes == null) {
-//
-//            }
-//
-//            Result.success(bytes)
-//        } catch (e: Exception) {
-//            Log.e(Constants.TAG,e.localizedMessage ?: "")
-//            Result.failure(e)
-//        }
-//
-//        return@withContext result
-//    }
-
     suspend fun loadImageData(target: FutureTarget<Bitmap>,context: CoroutineContext = Dispatchers.Default):
             Result<PHImageDescriptor> = withContext(context)
     {
@@ -433,27 +415,4 @@ class PhotoManager {
         }
         return context.contentResolver.openInputStream(uri)?.use { it.buffered().readBytes() }
     }
-
-//    @ExperimentalCoroutinesApi
-//    private suspend fun scanFilePath(
-//        path: String,
-//        mimeType: String,
-//    ): Result<Uri> {
-//        return suspendCancellableCoroutine { continuation ->
-//            MediaScannerConnection.scanFile(
-//                appContext,
-//                arrayOf(path),
-//                arrayOf(mimeType)
-//            ) { _, scannedUri ->
-//                if (scannedUri != null) {
-//                    continuation.resume(Result.success(scannedUri), null)
-//                } else {
-//                    continuation.resume(
-//                        Result.failure(Exception(Constants.Errors.UNKNOWN)),
-//                        null
-//                    )
-//                }
-//            }
-//        }
-//    }
 }

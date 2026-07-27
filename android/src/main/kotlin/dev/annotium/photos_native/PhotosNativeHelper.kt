@@ -4,6 +4,7 @@ package dev.annotium.photos_native
 
 import android.content.Context
 import android.os.Environment
+import android.util.Log
 import java.io.File
 
 object PhotosNativeHelper {
@@ -23,6 +24,7 @@ object PhotosNativeHelper {
             }
         }
         catch (e: Exception) {
+            Log.e(Constants.TAG, "Failed to clear cache path '$cachedPath': ${e.localizedMessage}")
         }
 
         cachedPath.mkdir()

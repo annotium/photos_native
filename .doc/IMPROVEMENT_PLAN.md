@@ -14,9 +14,10 @@ Audit date: 2026-07-27. Scope: `lib/` (Dart API), `android/src/main/kotlin/dev/a
 | `flutter_lints` (dev) | 2.0.2 | 6.0.0 | major — will surface new lint violations, budget separate PR |
 
 Other:
-- `flutter analyze` reports 1 warning: `lib/raw_image_provider.dart:56` — `override_on_non_overriding_member`. Root cause: `loadImage` is marked `@override` but the current Flutter SDK's `ImageProvider` only declares `load`, not `loadImage`. The `loadImage` override is dead/unreachable code today (only `load` is ever called by the framework), and is a forward-compat risk if `load` is ever replaced by `loadImage` in a future SDK.
+- `flutter analyze` reports 1 warning: `lib/raw_image_provider.dart:56` — `override_on_non_overriding_member`. Root cause (corrected after checking the Flutter SDK source directly): the current `ImageProvider` base class declares `loadImage(T key, ImageDecoderCallback decode)` (and a deprecated `loadBuffer`), but has **no** `load` method at all. `loadImage` was the valid override (the `ignore_for_file` masking its warning was stale, likely left over from an older SDK where `loadImage` didn't yet exist); `load` was the dead/non-overriding one. **Fixed**: removed `load`, kept `loadImage`, dropped the ignore comment — `flutter analyze` is now clean.
 - Android: `android/build.gradle` pins `compileSdkVersion 35`, AGP 8.7.3, Kotlin 2.0.21. **Target: bump to AGP 9.** `minSdkVersion 16` is a very old floor; confirm intentional since it constrains which APIs can be called unconditionally elsewhere.
 - iOS: podspec platform floor is iOS 9.0, but code already branches on `@available(iOS 10.0, *)` and uses modern Photos-framework APIs — floor should be raised (see Action Plan P1).
+- Android: Glide is pinned at `4.16.0` in `android/build.gradle:6`. Glide 5.0 is available — researched separately, low risk overall (near-identical API to 4.16, just recompiled against Java 8/Kotlin 1.8; no `RequestListener` usage in this plugin so the 4.16-era nullability annotation change doesn't affect it; `kapt` still supported in Glide 5 via the `com.github.bumptech.glide:compiler` artifact, no forced KSP migration). **One real blocker**: Glide 5 bumped its own floor to API 23 (was 14 in Glide 4) to match AndroidX, which conflicts with this plugin's declared `minSdkVersion 16` — bumping Glide to v5 requires bumping `minSdkVersion` to 23 too, which would break any consumer app still targeting API 16–22.
 
 ### AGP 9 migration requirements
 
@@ -98,7 +99,7 @@ Breaking changes that hit this plugin directly:
 
 ## 4. Dart layer issues
 
-- `raw_image_provider.dart:56` — see dependency section above (dead `loadImage` override, `ignore_for_file` masking it).
+- `raw_image_provider.dart:56` — see dependency section above (dead `load` override, since fixed).
 - Test coverage gaps:
   - Zero tests of `ph_types.dart` codec round-tripping (`PHGallery`, `PHAlbum`, `PHImageDescriptor`, `PHItem`, `PHVersion` `fromCodecMessage`), including malformed-message handling.
   - `photos_native_method_channel_test.dart` mock handler returns a constant value regardless of method name/args — doesn't exercise `save`, `delete`, `getPixels`, `getThumbnail`, `acquireTexture`, or `PlatformException` propagation.
@@ -116,17 +117,18 @@ Breaking changes that hit this plugin directly:
 **P1 — dependency & lint modernization**
 1. Bump `crypto`, `equatable`, `permission_handler` to latest resolvable versions.
 2. Upgrade `flutter_lints` 2.0.2 → 6.0.0 in a dedicated PR; fix newly surfaced lints separately from behavior changes.
-3. Remove the dead `loadImage` override in `raw_image_provider.dart` (keep `load`), delete the associated `ignore_for_file`.
-4. Raise iOS deployment target from 9.0 to 12+ and remove the now-dead pre-iOS-10 `openURL:` branch in `UrlLauncher.m`.
-5. **Bump to AGP 9** (dedicated PR, do before/separately from other Android changes since it touches build infra, not app code):
-   - Bump `example/android/gradle/wrapper/gradle-wrapper.properties` to Gradle ≥ 9.1.0.
-   - Bump `classpath 'com.android.tools.build:gradle:...'` in `android/build.gradle:15` to 9.0.1 (or latest 9.x).
-   - Bump `kotlin_version` to ≥ 2.2.10 in `android/build.gradle:6`.
-   - Add explicit `namespace 'dev.annotium.photos_native'` inside the `android { }` block in `android/build.gradle`, so the plugin doesn't rely on `example/android/build.gradle`'s `subprojects`/`afterEvaluate` namespace shim (that shim only covers the example app, not real downstream consumers).
-   - Migrate the Glide annotation processor off `kapt`/`annotationProcessor` (`android/build.gradle:24,49-50`) onto **KSP** (`com.github.bumptech.glide:ksp:$glide_version` + `apply plugin: 'com.google.devtools.ksp'`), since kapt is incompatible with AGP 9's default built-in-Kotlin mode.
-   - If KSP migration can't land in the same PR, set `android.builtInKotlin=false` in `gradle.properties` as a stop-gap — but note this opt-out is removed in AGP 10 (mid-2026), so treat it as temporary, not a resting state.
-   - Optionally raise `compileSdkVersion` from 35 to 36/36.1 (AGP 9's max supported) while in the build files.
-   - After bumping, run `flutter build apk`/`./gradlew assembleDebug` from `example/android` and fix any fallout from the new-DSL defaults (`android.newDsl=true`, `android.uniquePackageNames=true`) before merging.
+3. Remove the dead `load` override in `raw_image_provider.dart` (keep `loadImage`), delete the associated `ignore_for_file`. **Done.**
+4. Raise iOS deployment target from 9.0 to 12+ and remove the now-dead pre-iOS-10 `openURL:` branch in `UrlLauncher.m`. **Done.**
+5. **Bump to AGP 9.** **Done and verified** — `./gradlew assembleDebug` succeeds from `example/android` after the following changes:
+   - `example/android/gradle/wrapper/gradle-wrapper.properties` → Gradle `9.1.0`.
+   - `android/build.gradle`: AGP classpath → `9.0.1`, `kotlin_version` → `2.2.10`, added explicit `namespace 'dev.annotium.photos_native'` inside `android { }` (no longer relies on `example/android/build.gradle`'s `subprojects`/`afterEvaluate` namespace shim for the plugin itself).
+   - `example/android/settings.gradle`: bumped the `com.android.application` and `org.jetbrains.kotlin.android` plugin versions to match (`9.0.1` / `2.2.10`).
+   - `example/android/app/build.gradle`: added explicit `namespace 'dev.annotium.photos_native_example'` — AGP 9 **no longer reads `namespace` from the manifest's `package` attribute at all** (this hit even though the app already had a namespace source; not just a library-only requirement as originally assumed).
+   - `example/android/app/src/main/AndroidManifest.xml`: removed the now-rejected `package="dev.annotium.photos_native_example"` attribute (AGP 9 fails the build if it's present).
+   - `example/android/gradle.properties`: added `android.builtInKotlin=false` **and** `android.newDsl=false`. Both were required — `builtInKotlin=false` alone was not enough; without `newDsl=false` too, applying the `kotlin-android` plugin threw `ClassCastException: ApplicationExtensionImpl$AgpDecorated_Decorated cannot be cast to BaseExtension`, because the new DSL's extension type is incompatible with what `kotlin-android` expects regardless of the built-in-Kotlin setting. **Kapt was left as-is** (not migrated to KSP in this pass) since these two opt-outs were sufficient to keep the existing `kotlin-android`/`kotlin-kapt` setup working; KSP migration remains a good follow-up before AGP 10 removes the opt-outs (mid-2026), but wasn't required to get AGP 9 building.
+   - Also bumped `example/android/gradle.properties`' `org.gradle.jvmargs` from `-Xmx1536M` to `-Xmx4096M` — unrelated to AGP 9 itself, but the Jetifier transform step ran out of heap at the old value during verification and needed more memory to complete.
+   - `compileSdkVersion` bumped 35 → 36 (AGP 9's max supported). **Done and verified.**
+6. **Bump Glide 4.16.0 → 5.0.4** in `android/build.gradle:6` (`glide_version`), plus **bump `minSdkVersion` 16 → 23** in the same file — Glide 5 raised its own floor to API 23 to match AndroidX. **Done and verified**: `./gradlew assembleDebug` succeeds, `kaptDebugKotlin` regenerates `GeneratedAppGlideModule` correctly against the existing `CustomAppGlideModule`/`@GlideModule` setup — no `kapt`→KSP migration was needed for this bump. This is a breaking change for any consumer app that was still targeting API 16–22; call it out explicitly in the changelog/release notes when publishing.
 
 **P2 — error handling & robustness**
 1. Replace `!!` force-unwraps in `PhotosNativePlugin.kt` argument parsing with explicit null checks that reply `PlatformException` (bad-arguments error) instead of crashing.

@@ -23,6 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
+    namespace 'dev.annotium.photos_native_example'
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion '27.0.12077973'
 

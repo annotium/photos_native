@@ -30,8 +30,8 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
   private val newIntentListenerHandle = OnNewIntentListenerHandle()
   private var deleteHandler: DeleteResultListenerHandle? = null
 
-  private var _mediaStoreChanged = false
-  private val _memoMap = mutableMapOf<String, Any>();
+  @Volatile private var _mediaStoreChanged = false
+  private val _memoMap = java.util.Collections.synchronizedMap(mutableMapOf<String, Any>())
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPluginBinding) {
     pluginBinding = flutterPluginBinding
@@ -74,6 +74,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
     activityBinding?.let { activityBinding ->
       deleteHandler?.let {
         activityBinding.removeActivityResultListener(it)
+        it.cancel()
       }
       deleteHandler = null
 
@@ -224,7 +225,11 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         }
       }
       Constants.Functions.DELETE -> {
-        val ids = call.argument<List<String>>(Constants.Arguments.IDS)!!
+        val ids = call.argument<List<String>>(Constants.Arguments.IDS)
+        if (ids == null) {
+          resultHandler.error(Constants.Errors.INVALID, "Missing 'ids' argument")
+          return
+        }
         if (deleteHandler != null) {
           deleteHandler?.delete(ids, resultHandler)
           for (id in ids) {
@@ -239,12 +244,17 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         }
       }
       Constants.Functions.ENCODE -> {
-        val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
-        val width = call.argument<Int>(Constants.Arguments.WIDTH)!!
-        val height = call.argument<Int>(Constants.Arguments.HEIGHT)!!
-        val mime = call.argument<String>(Constants.Arguments.MIME)!!
+        val data = call.argument<ByteArray>(Constants.Arguments.DATA)
+        val width = call.argument<Int>(Constants.Arguments.WIDTH)
+        val height = call.argument<Int>(Constants.Arguments.HEIGHT)
+        val mime = call.argument<String>(Constants.Arguments.MIME)
         val quality = call.argument<Int>(Constants.Arguments.QUALITY)
           ?: Constants.DEFAULT_QUALITY
+
+        if (data == null || width == null || height == null || mime == null) {
+          resultHandler.error(Constants.Errors.INVALID, "Missing required argument")
+          return
+        }
 
         methodCallHandler?.encode(
           data,
@@ -256,13 +266,18 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         )
       }
       Constants.Functions.SAVE -> {
-        val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
-        val width = call.argument<Int>(Constants.Arguments.WIDTH)!!
-        val height = call.argument<Int>(Constants.Arguments.HEIGHT)!!
-        val mime = call.argument<String>(Constants.Arguments.MIME)!!
+        val data = call.argument<ByteArray>(Constants.Arguments.DATA)
+        val width = call.argument<Int>(Constants.Arguments.WIDTH)
+        val height = call.argument<Int>(Constants.Arguments.HEIGHT)
+        val mime = call.argument<String>(Constants.Arguments.MIME)
         val album = call.argument<String>(Constants.Arguments.ALBUM)
         val quality = call.argument<Int>(Constants.Arguments.QUALITY)
           ?: Constants.DEFAULT_QUALITY
+
+        if (data == null || width == null || height == null || mime == null) {
+          resultHandler.error(Constants.Errors.INVALID, "Missing required argument")
+          return
+        }
 
         methodCallHandler?.save(
           activity,
@@ -276,13 +291,18 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         )
       }
       Constants.Functions.SAVE_FILE -> {
-        val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
-        val width = call.argument<Int>(Constants.Arguments.WIDTH)!!
-        val height = call.argument<Int>(Constants.Arguments.HEIGHT)!!
-        val mime = call.argument<String>(Constants.Arguments.MIME)!!
+        val data = call.argument<ByteArray>(Constants.Arguments.DATA)
+        val width = call.argument<Int>(Constants.Arguments.WIDTH)
+        val height = call.argument<Int>(Constants.Arguments.HEIGHT)
+        val mime = call.argument<String>(Constants.Arguments.MIME)
         val quality = call.argument<Int>(Constants.Arguments.QUALITY)
           ?: Constants.DEFAULT_QUALITY
-        val path = call.argument<String>(Constants.Arguments.PATH)!!
+        val path = call.argument<String>(Constants.Arguments.PATH)
+
+        if (data == null || width == null || height == null || mime == null || path == null) {
+          resultHandler.error(Constants.Errors.INVALID, "Missing required argument")
+          return
+        }
 
         methodCallHandler?.saveFile(
           activity,
@@ -296,16 +316,23 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         )
       }
       Constants.Functions.SHARE -> {
-        val data = call.argument<ByteArray>(Constants.Arguments.DATA)!!
-        val width = call.argument<Int>(Constants.Arguments.WIDTH)!!
-        val height = call.argument<Int>(Constants.Arguments.HEIGHT)!!
+        val data = call.argument<ByteArray>(Constants.Arguments.DATA)
+        val width = call.argument<Int>(Constants.Arguments.WIDTH)
+        val height = call.argument<Int>(Constants.Arguments.HEIGHT)
         val title = call.argument<String>(Constants.Arguments.TITLE) ?: ""
+
+        if (data == null || width == null || height == null) {
+          resultHandler.error(Constants.Errors.INVALID, "Missing required argument")
+          return
+        }
+
         methodCallHandler?.share(activity, data, width, height, title, resultHandler)
       }
       Constants.Functions.LAUNCH_URL -> {
         val url = call.argument<String>(Constants.Arguments.URL)
         if (url.isNullOrEmpty()) {
           result.success(false)
+          return
         }
 
         val urlLauncher = UrlLauncher()
@@ -376,17 +403,10 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
         PackageManager.GET_ACTIVITIES
       )
 
-      val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        info.longVersionCode.toString()
-      } else {
-        @Suppress("DEPRECATION")
-        info.versionCode.toString()
-      }
-
       result.success(
         mapOf<String, Any>(
           Constants.APP_VERSION to (info.versionName ?: ""),
-          Constants.BUILD_NUMBER to versionCode,
+          Constants.BUILD_NUMBER to info.versionCodeCompat.toString(),
           Constants.SDK_INT to Build.VERSION.SDK_INT
         )
       )
@@ -409,6 +429,7 @@ class PhotosNativePlugin: FlutterPlugin, ActivityAware, MethodChannel.MethodCall
     return true
   }
 
+  // Consume-on-read: removes the key so it's only delivered to the first caller.
   private fun getMemo(key: String?): Any? {
     Log.d(Constants.TAG, "Get value for key '$key'")
 

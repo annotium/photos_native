@@ -19,9 +19,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/photos_native/ios"
 
 SPEC CHECKSUMS:
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
-  photos_native: 312b1670099a66fad71a2d1d49effa27e821087e
+  photos_native: 74bc96673ded36f2215fb5113257f6f3148c34b7
 
 PODFILE CHECKSUM: 2e278bc447e3dd7c3b126ee8c61d07e0aee336c3
 
