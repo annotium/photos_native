@@ -29,22 +29,11 @@
 
     UIApplication *application = [UIApplication sharedApplication];
     if ([application canOpenURL:url]) {
-        if (@available(iOS 10.0, *)) {
-            #pragma clang diagnostic push
-            #pragma clang diagnostic ignored "-Wnonnull"
-            [application openURL:url
-                          options:nil
-                completionHandler:^(BOOL success) {
-                    [resultHandler reply:[NSNumber numberWithBool:success]];
-                }];
-            #pragma clang diagnostic pop
-        } else {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            BOOL success = [application openURL:url];
-        #pragma clang diagnostic pop
-              [resultHandler reply:[NSNumber numberWithBool:success]];
-        }
+        [application openURL:url
+                      options:@{}
+            completionHandler:^(BOOL success) {
+                [resultHandler reply:[NSNumber numberWithBool:success]];
+            }];
     }
     else {
         [resultHandler reply:[NSNumber numberWithBool:FALSE]];

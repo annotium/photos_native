@@ -29,17 +29,23 @@ class PermissionHandler(private val activity: Activity):
                     )
     }
 
-    private var onRequestFinished: RequestFinishedHandler? = null
+    // Multiple concurrent requestPermissions() calls queue up here instead of
+    // overwriting each other, so every caller gets notified of the result.
+    private val pendingCallbacks = mutableListOf<RequestFinishedHandler>()
 
     val hasDefaultPermissions get() = hasSpecificPermissions(DefaultPermissions)
 
+    @Synchronized
     fun requestPermissions(onRequestDone: (granted: Boolean) -> Unit) {
-        onRequestFinished = onRequestDone
-
         if (hasSpecificPermissions(DefaultPermissions)) {
             onRequestDone.invoke(true)
+            return
         }
-        else {
+
+        val alreadyInFlight = pendingCallbacks.isNotEmpty()
+        pendingCallbacks.add(onRequestDone)
+
+        if (!alreadyInFlight) {
             ActivityCompat.requestPermissions(
                 activity,
                 DefaultPermissions,
@@ -51,6 +57,7 @@ class PermissionHandler(private val activity: Activity):
     // This is invoked after the user chooses an option on the Android permission dialog
     // Note that the code to check the grant is simplified, if you request multiple
     // permissions you can't make the assumptions this makes.
+    @Synchronized
     override fun onRequestPermissionsResult(
             requestCode: Int,
             permissions: Array<out String>,
@@ -62,7 +69,9 @@ class PermissionHandler(private val activity: Activity):
 					granted = granted and (it == PackageManager.PERMISSION_GRANTED)
 				}
 
-				onRequestFinished?.invoke(granted)
+				val callbacks = pendingCallbacks.toList()
+				pendingCallbacks.clear()
+				callbacks.forEach { it.invoke(granted) }
 
                 return true
             }

@@ -29,6 +29,35 @@
     NSMutableDictionary* textureMap;
 }
 
+// Confines file reads to the app's own sandbox (home/tmp dirs, or the shared
+// app-group container) so a Dart-supplied path can't read arbitrary files.
+static BOOL PathIsWithinSandbox(NSString* path) {
+    if (path == nil || path.length == 0) {
+        return NO;
+    }
+
+    NSString* standardizedPath = [path stringByStandardizingPath];
+    NSMutableArray<NSString*>* allowedRoots = [NSMutableArray arrayWithObjects:
+        [NSHomeDirectory() stringByStandardizingPath],
+        [NSTemporaryDirectory() stringByStandardizingPath],
+        nil];
+
+    NSURL* groupContainer = [[NSFileManager defaultManager]
+        containerURLForSecurityApplicationGroupIdentifier:ANNOTIUM_GROUP];
+    if (groupContainer != nil) {
+        [allowedRoots addObject:[groupContainer.path stringByStandardizingPath]];
+    }
+
+    for (NSString* root in allowedRoots) {
+        if ([standardizedPath isEqualToString:root] ||
+            [standardizedPath hasPrefix:[root stringByAppendingString:@"/"]]) {
+            return YES;
+        }
+    }
+
+    return NO;
+}
+
 + (CGSize) getAssetSize:(PHAsset* _Nonnull) asset maxSize:(int) maxWidth
 {
     CGFloat maxSize = (CGFloat)maxWidth;
@@ -61,7 +90,6 @@
         cachingManager = [PHCachingImageManager new];
         operationQueue = [NSOperationQueue new];
         operationQueue.maxConcurrentOperationCount = [[NSProcessInfo processInfo] processorCount];
-        [self startObserve];
     }
 
     return self;
@@ -283,14 +311,18 @@
                 [resultHandler replyError:ERR_UNKNOWN];
                 return;
             }
-            
+
             CGSize size = result.size;
             PHImageDescription* imageDescription = [PHImageDescription
                                                     imageWithWidth:size.width
                                                     height:size.height
                                                     data:data];
-            
+
             [resultHandler reply: [imageDescription toMessageCodec]];
+        }
+        else if (![info[PHImageResultIsInCloudKey] boolValue]) {
+            NSError* error = info[PHImageErrorKey];
+            [resultHandler replyError:error.localizedDescription ?: ERR_UNKNOWN];
         }
     }];
 
@@ -322,15 +354,19 @@
                     [resultHandler replyError:ERR_UNKNOWN];
                     return;
                 }
-                
+
                 CGSize size = result.size;
                 PHImageDescription* imageDescription = [PHImageDescription
                                                         imageWithWidth:size.width
                                                         height:size.height
                                                         data:data];
-                
+
                 [resultHandler reply: [imageDescription toMessageCodec]];
             }
+        }
+        else if (![info[PHImageResultIsInCloudKey] boolValue]) {
+            NSError* error = info[PHImageErrorKey];
+            [resultHandler replyError:error.localizedDescription ?: ERR_UNKNOWN];
         }
     }];
 }
@@ -350,16 +386,20 @@
         if (result != nil) {
             [resultHandler reply: [FlutterStandardTypedData typedDataWithBytes:result]];
         }
+        else if (![info[PHImageResultIsInCloudKey] boolValue]) {
+            NSError* error = info[PHImageErrorKey];
+            [resultHandler replyError:error.localizedDescription ?: ERR_UNKNOWN];
+        }
     }];
 }
 
 - (void) getPixelsDataFromUrl:(NSString* _Nonnull) path resultHandler:(ResultHandler*) resultHandler
 {
-    if (path == nil) {
+    if (!PathIsWithinSandbox(path)) {
         [resultHandler replyError:ERR_UNKNOWN];
         return;
     }
-    
+
     NSData* data = [[NSFileManager defaultManager] contentsAtPath:path];
     _initialImage = @"";
 
@@ -372,11 +412,11 @@
 
 - (void) getPixelsFromUrl:(NSString* _Nonnull) path maxWidth:(int) maxWidth resultHandler:(ResultHandler*) resultHandler
 {
-    if (path == nil) {
+    if (!PathIsWithinSandbox(path)) {
         [resultHandler replyError:ERR_UNKNOWN];
         return;
     }
-    
+
     UIImage *image = [UIImage imageWithData:[[NSFileManager defaultManager] contentsAtPath:path]];
     if (image == nil) {
         [resultHandler replyError:ERR_UNKNOWN];
@@ -411,12 +451,10 @@
                                                           subtype: PHAssetCollectionSubtypeAny
                                                           options: options];
     if (albumCollections.count > 0) {
-//        NSLog(@"Found collection name %@", title);
         return albumCollections.firstObject;
     }
 
     // if not existed, create new
-//    NSLog(@"Create collection name %@", title);
     __block NSString* targetId;
     [PHPhotoLibrary.sharedPhotoLibrary performChangesAndWait:^{
         PHAssetCollectionChangeRequest *request =
@@ -468,8 +506,6 @@
 - (void) acquireTexture:(NSDictionary* _Nonnull) arguments resultHandler:(ResultHandler*) resultHandler
 {
     NSString* identifier = arguments[ARG_ID];
-//    NSLog(@"Acquire texture '%@'", identifier);
-
     int width = [arguments[ARG_WIDTH] intValue];
     int height = [arguments[ARG_HEIGHT] intValue];
 
@@ -502,8 +538,6 @@
 - (void) releaseTexture:(NSDictionary* _Nonnull) arguments resultHandler:(ResultHandler*) resultHandler
 {
     NSString* identifier = arguments[ARG_ID];
-//    NSLog(@"Release texture '%@'", identifier);
-    
     ImageTexture* imageTexture = [textureMap objectForKey:identifier];
     if (imageTexture) {
         [textureMap removeObjectForKey:identifier];
@@ -522,22 +556,8 @@
     BOOL cached = [_cachedAssets containsObject:[asset localIdentifier]];
     
     PHImageRequestOptions* options = [QueryOptions getThumbnailRequestOptions];
-//    CGSize size = CGSizeMake(asset.pixelWidth, asset.pixelHeight);
     CGSize size = CGSizeMake(width, width);
-//    CGRect square = CGRectMake(0, 0, width, width);
-//    CGRect cropRect = CGRectApplyAffineTransform(square,
-//                     CGAffineTransformMakeScale(1.0 / asset.pixelWidth,
-//                                                1.0 / asset.pixelHeight));
-//    options.normalizedCropRect = cropRect;
 
-//    [[PHImageManager defaultManager] requestImageForAsset:asset targetSize:size contentMode:PHImageContentModeAspectFill options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-//        if (result != nil) {
-//            if (![info objectForKey:PHImageResultIsDegradedKey] || ![info[PHImageResultIsDegradedKey] boolValue]) {
-//                completionHandler(result);
-//            }
-//        }
-//    }];
-    
     [cachingManager requestImageForAsset:asset targetSize:size contentMode:PHImageContentModeAspectFill options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
         if (result != nil) {
             if (![info objectForKey:PHImageResultIsDegradedKey] || ![info[PHImageResultIsDegradedKey] boolValue]) {

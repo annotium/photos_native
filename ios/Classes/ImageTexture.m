@@ -39,7 +39,7 @@ BOOL CGImageRefContainsAlpha(CGImageRef imageRef) {
 @interface ImageTexture()
 
 @property (nonatomic, weak) NSObject<FlutterTextureRegistry>* textures;
-@property (nonatomic, assign) UIImage* image;
+@property (nonatomic, strong) UIImage* image;
 @property (nonatomic) CVPixelBufferRef target;
 @property (nonatomic,assign) CGSize size;
 @property(nonatomic,assign)Boolean isCopy;

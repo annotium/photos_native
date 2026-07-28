@@ -18,6 +18,11 @@ fun PackageManager.getPackageInfoCompat(packageName: String, flags: Int = 0): Pa
         @Suppress("DEPRECATION") getPackageInfo(packageName, flags)
 }
 
+val PackageInfo.versionCodeCompat: Long get() = when {
+    SDK_INT >= Build.VERSION_CODES.P -> longVersionCode
+    else -> @Suppress("DEPRECATION") versionCode.toLong()
+}
+
 fun PackageManager.queryIntentActivitiesCompat(intent: Intent, flags: Int = 0): List<ResolveInfo> = when {
     SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
         queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))

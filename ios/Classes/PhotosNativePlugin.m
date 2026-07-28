@@ -131,9 +131,17 @@
     if ([TYPE_MEDIA isEqualToString:url.fragment]) {
         NSArray<NSString*>* components = [url.host componentsSeparatedByString:@"="];
         NSString* key = [components lastObject];
+        if (![key isKindOfClass:[NSString class]] || key.length == 0) {
+            return FALSE;
+        }
+
         NSUserDefaults* userDefaults = [[NSUserDefaults alloc] initWithSuiteName:ANNOTIUM_GROUP];
-        NSString* url = [userDefaults objectForKey:key];
-        NSString* path = [url stringByStandardizingPath];
+        id storedValue = [userDefaults objectForKey:key];
+        if (![storedValue isKindOfClass:[NSString class]]) {
+            return FALSE;
+        }
+
+        NSString* path = [(NSString*)storedValue stringByStandardizingPath];
         if (path && path.length) {
             [self setMemo:KEY_SHARED_URI value:path];
         }

@@ -41,8 +41,14 @@
     [albums sortUsingComparator:^NSComparisonResult(id  _Nonnull id0, id  _Nonnull id1) {
         long count0 = [(PHAlbum*)id0 items].count;
         long count1 = [(PHAlbum*)id1 items].count;
-        
-        return count0 < count1;
+
+        if (count0 < count1) {
+            return NSOrderedAscending;
+        }
+        if (count0 > count1) {
+            return NSOrderedDescending;
+        }
+        return NSOrderedSame;
     }];
     
     NSMutableArray* codecs = [NSMutableArray array];

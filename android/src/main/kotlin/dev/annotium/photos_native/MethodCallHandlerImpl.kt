@@ -359,7 +359,6 @@ class MethodCallHandlerImpl
     }
 
     fun releaseTexture(id: String) {
-        // Log.d(Constants.TAG, "Release texture: $id")
         textureMap.remove(id)?.dispose()
     }
 
@@ -370,19 +369,4 @@ class MethodCallHandlerImpl
         }
         textureMap.clear()
     }
-
-//    private fun loadTarget(target: FutureTarget<Bitmap>, resultHandler: ResultHandler) {
-//        try {
-//            val bitmap = target.get()
-//            val data = ByteArray(bitmap.allocationByteCount)
-//            bitmap.copyPixelsToBuffer(ByteBuffer.wrap(data))
-//            val phDesc = PHImageDescriptor(bitmap.width, bitmap.height, data)
-//            resultHandler.success(phDesc.toMessageCodec())
-//        } catch (e: Exception) {
-//            Log.e(Constants.Errors.UNKNOWN, e.localizedMessage ?: "")
-//            resultHandler.error(Constants.Errors.UNKNOWN, e.localizedMessage, e.stackTrace)
-//        }
-//
-//        target.cancel(false)
-//    }
 }
