@@ -24,4 +24,8 @@
 
 ## 0.0.8
 
-- iOS: Upgrade to Android SDK 35
+- Android: Upgrade to Android SDK 35
+
+## 1.0.0
+
+- First major version
