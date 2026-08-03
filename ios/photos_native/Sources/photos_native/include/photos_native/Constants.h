@@ -8,6 +8,8 @@
 #ifndef Constants_h
 #define Constants_h
 
+#import <Foundation/Foundation.h>
+
 static const int DEFAULT_QUALITY = 80;
 
 static NSString* const ANNOTIUM = @"Annotium";

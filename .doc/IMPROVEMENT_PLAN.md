@@ -160,3 +160,18 @@ Breaking changes that hit this plugin directly:
 1. Add `ph_types.dart` codec round-trip tests (encode → decode → equality), including malformed/missing-key inputs.
 2. Extend `photos_native_method_channel_test.dart` with per-method mock responses and at least one `PlatformException` propagation test.
 3. Add tests for the SDK-version-based permission group selection logic in `photos_native_method_channel.dart`.
+
+**P6 — Swift Package Manager support (iOS)**
+
+**Done and verified** (both CocoaPods and SPM build paths). This was not in the original audit; added on request.
+
+1. Moved all iOS sources from `ios/Classes/` to the SPM-required layout: headers under `ios/photos_native/Sources/photos_native/include/photos_native/`, implementation files under `ios/photos_native/Sources/photos_native/`. `ios/Classes/` no longer exists.
+2. Added `ios/photos_native/Package.swift` — target name `photos_native`, iOS 13.0 platform floor (matches the podspec, see P1 item 4), depends on Flutter's local `FlutterFramework` SPM package (the standard Flutter-managed reference, not a real path in this repo — Flutter's tooling resolves it), `cSettings.headerSearchPath("include/photos_native")` for same-directory-style `#import` statements to keep working unchanged.
+3. Updated `ios/photos_native.podspec`'s `source_files`/`public_header_files` to point at the new location — CocoaPods and SPM now share the same source files, no duplication.
+4. **Found and fixed two real latent header bugs surfaced by SPM's stricter per-target compilation** (both existed before this change, just silently tolerated by CocoaPods' looser umbrella-module compilation):
+   - `ImageConverter.h` used `UIImage`, `CGRect`, etc. without importing `UIKit/UIKit.h` — added the import.
+   - `Constants.h` used `NSString*` throughout without importing `Foundation/Foundation.h` at all — added the import.
+5. Verified both build paths from a clean state on the example app:
+   - SPM: `flutter config --enable-swift-package-manager` → `flutter clean` → `flutter build ios --simulator --no-codesign` → succeeds (`✓ Built build/ios/iphonesimulator/Runner.app`). Flutter warns that `permission_handler_apple` (a different, third-party pub.dev plugin) doesn't support SPM yet — that's on its own maintainers, not actionable here.
+   - CocoaPods: `flutter config --no-enable-swift-package-manager` → `flutter clean` → `flutter build ios --simulator --no-codesign` → succeeds.
+6. **Note on example-app project churn**: the first `flutter build ios` after enabling SPM auto-migrates the consuming app's Xcode project (`project.pbxproj`, `Podfile`, `AppFrameworkInfo.plist`, UIScene lifecycle migration, etc.) — this is Flutter's own one-way project modernization, independent of this plugin, and happens for any sufficiently old Flutter iOS project. Those incidental changes were reverted after verification to keep this change scoped to the plugin's own SPM support; only `example/ios/Podfile.lock`'s checksum line changed for real (expected — the podspec's `source_files`/`public_header_files` paths changed, so its checksum did too).
