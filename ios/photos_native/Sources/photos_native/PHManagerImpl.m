@@ -50,7 +50,31 @@
         }
         return NSOrderedSame;
     }];
-    
+
+    // "Recents" (formerly "Camera Roll") is Apple's own most-complete
+    // personal-library album — the semantic equivalent of Android's
+    // synthesized "AllPhotos" pseudo-album, which is always index 0. The
+    // count-ascending sort above puts it near the END of the list (it's
+    // typically the largest album), so callers defaulting to index 0 (see
+    // `GalleryController._selectedAlbumIndex`) would not land on it. Pin it
+    // to index 0 to match that expectation, without disturbing relative
+    // order of the rest.
+    PHFetchResult<PHAssetCollection*>* userLibraryCollections =
+        [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum
+                                                  subtype:PHAssetCollectionSubtypeSmartAlbumUserLibrary
+                                                  options:nil];
+    NSString* userLibraryId = userLibraryCollections.firstObject.localIdentifier;
+    if (userLibraryId != nil) {
+        NSUInteger index = [albums indexOfObjectPassingTest:^BOOL(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            return [[(PHAlbum*)obj identifier] isEqualToString:userLibraryId];
+        }];
+        if (index != NSNotFound && index != 0) {
+            PHAlbum* userLibraryAlbum = albums[index];
+            [albums removeObjectAtIndex:index];
+            [albums insertObject:userLibraryAlbum atIndex:0];
+        }
+    }
+
     NSMutableArray* codecs = [NSMutableArray array];
     for (PHAlbum* album in albums) {
         [codecs addObject:[album toMessageCodec]];
